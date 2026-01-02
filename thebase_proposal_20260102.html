@@ -6,35 +6,38 @@
     <title>Proposal for The Base: Digital Chee-Mama</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- フォント構成: 高級感のある明朝体とセリフ体を採用 -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- フォント構成: 高級感のある明朝体とセリフ体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             /* 高級感のある黒とゴールドのカラーパレット */
-            --bg-dark: #000000;       /* Pure Black */
+            --bg-dark: #000000;
             --primary-gold: #CCA43B;  /* Rich Gold */
-            --secondary-gold: #E5C376; /* Lighter Gold */
-            --accent-dark: #1A1A1A;   /* Dark Charcoal */
+            --secondary-gold: #F4E2B0; /* Pale Gold */
+            --accent-dark: #111111;
             
-            --text-main: #FFFFFF;     /* White */
-            --text-muted: #A0A0A0;    /* Warm Grey */
-            --text-gold: #CCA43B;     /* Gold Text */
+            --text-main: #FFFFFF;
+            --text-muted: #CCCCCC;
+            --text-gold: #CCA43B;
 
-            --glass-bg: rgba(20, 20, 20, 0.7); /* より暗いグラス */
-            --glass-border: rgba(204, 164, 59, 0.4); /* ゴールドの境界線 */
-            --glass-highlight: rgba(229, 195, 118, 0.2); /* ゴールドのハイライト */
+            --glass-bg: rgba(0, 0, 0, 0.65); /* 背景を透かす黒 */
+            --glass-border: rgba(204, 164, 59, 0.3); 
+            --glass-highlight: rgba(255, 255, 255, 0.1);
             
-            /* LINE Color */
             --line-green: #06c755;
+            
+            /* Table Colors */
+            --table-header-bg: rgba(204, 164, 59, 0.1);
+            --table-row-hover: rgba(255, 255, 255, 0.05);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: 'Noto Sans JP', serif;
+            font-family: 'Noto Sans JP', sans-serif;
             overflow-x: hidden;
         }
 
@@ -49,7 +52,7 @@
         .slide {
             width: 100%;
             height: 100vh;
-            min-height: 720px;
+            min-height: 800px;
             position: relative;
             display: flex; 
             flex-direction: column; 
@@ -57,417 +60,416 @@
             align-items: center;
             padding: 4rem 6rem;
             page-break-after: always;
-            /* 背景デザイン: 黒とゴールドの高級感あるグラデーション */
-            background: radial-gradient(circle at 50% -20%, rgba(204, 164, 59, 0.2) 0%, transparent 60%),
-                        linear-gradient(135deg, var(--bg-dark) 0%, #111111 100%);
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #222;
             overflow: hidden;
         }
 
-        /* 装飾的な背景グリッド (繊細なゴールドの光) */
-        .slide::before {
-            content: '';
+        /* 背景画像設定 */
+        .slide-bg {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: 
-                linear-gradient(rgba(204, 164, 59, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(204, 164, 59, 0.05) 1px, transparent 1px);
-            background-size: 100px 100px;
-            pointer-events: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
             z-index: 0;
-            opacity: 0.5;
+            filter: brightness(0.4) blur(2px);
+            transform: scale(1.05);
         }
         
-        /* タイトルスライドの特別な背景 */
-        #s1 {
-            background: radial-gradient(circle at 70% 30%, rgba(204, 164, 59, 0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 30% 70%, rgba(204, 164, 59, 0.1) 0%, transparent 50%),
-                        linear-gradient(135deg, var(--bg-dark) 0%, #0a0a0a 100%);
-        }
-        
-        /* ロゴのスタイル修正 */
-        .logo-container {
-            margin-bottom: 3rem; /* 余白を広めに確保 */
+        /* グラデーションオーバーレイ */
+        .slide-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20,20,20,0.6) 100%);
             z-index: 1;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* ロゴ周りにほのかな光を与える */
-            filter: drop-shadow(0 0 15px rgba(204, 164, 59, 0.3));
         }
-        .logo-img {
-            /* 幅ではなく高さを基準に制限することで、横長・縦長どちらのロゴでもバランスよく表示 */
-            max-height: 160px; 
-            max-width: 60%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
+
+        /* Slide Specific Backgrounds (Updated) */
+        #s1 .slide-bg { background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=2070&auto=format&fit=crop'); filter: brightness(0.5); }
+        #s2 .slide-bg { background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?q=80&w=2070&auto=format&fit=crop'); }
+        #s3 .slide-bg { background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2070&auto=format&fit=crop'); }
+        #s4 .slide-bg { background-image: url('https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=2070&auto=format&fit=crop'); }
+        #s5 .slide-bg { background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop'); }
+        #s6 .slide-bg { background-image: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2070&auto=format&fit=crop'); }
+        #s7 .slide-bg { background-image: url('https://images.unsplash.com/photo-1535303311164-664fc9ec6532?q=80&w=2070&auto=format&fit=crop'); }
+        #s8 .slide-bg { background-image: url('https://images.unsplash.com/photo-1569937756447-e25c0fb7598f?q=80&w=2070&auto=format&fit=crop'); }
+
+        /* コンテンツラッパー */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typography */
         h1 { 
             font-family: 'Cinzel', serif; 
-            font-size: 80px; 
+            font-size: 90px; 
             font-weight: 900;
-            background: linear-gradient(to right, #fff, var(--secondary-gold));
+            color: #fff;
+            text-align: center; 
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            background: linear-gradient(to bottom, #fff 30%, var(--primary-gold) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: center; 
-            letter-spacing: 0.02em;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            z-index: 1;
-            text-shadow: 0 0 50px rgba(204, 164, 59, 0.3);
         }
         
         h2 { 
             font-family: 'Zen Old Mincho', serif;
-            font-size: 42px; 
-            margin-bottom: 3rem; 
+            font-size: 46px; 
+            margin-bottom: 3.5rem; 
             text-align: center; 
             color: #fff;
-            position: relative;
-            z-index: 1;
             font-weight: 700;
-        }
-        
-        h2::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
-            margin: 1.5rem auto 0;
-            border-radius: 2px;
-            box-shadow: 0 0 15px var(--primary-gold);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            border-bottom: 3px solid var(--primary-gold);
+            padding-bottom: 10px;
+            display: inline-block;
         }
 
         h3 { 
             font-family: 'Zen Old Mincho', serif;
             font-size: 24px; 
-            color: var(--text-gold); 
+            color: var(--primary-gold); 
             margin-bottom: 1rem; 
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         p { 
             font-size: 18px; 
-            line-height: 1.8; 
+            line-height: 1.9; 
             color: var(--text-muted); 
             text-align: center; 
-            max-width: 900px;
-            z-index: 1;
-        }
-
-        .highlight { 
-            color: #fff; 
-            font-weight: 700; 
-            background: linear-gradient(transparent 70%, rgba(204, 164, 59, 0.4) 70%);
-            padding: 0 5px;
+            max-width: 800px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
 
         .project-label {
             font-family: 'Cinzel', serif;
-            font-size: 14px;
-            letter-spacing: 0.3em;
-            color: var(--primary-gold);
-            border: 1px solid var(--primary-gold);
-            padding: 8px 16px;
-            border-radius: 0; /* 角を直角に */
+            font-size: 16px;
+            letter-spacing: 0.4em;
+            color: var(--secondary-gold);
+            border: 1px solid var(--secondary-gold);
+            padding: 10px 24px;
             margin-bottom: 2rem;
-            background: rgba(204, 164, 59, 0.1);
-            z-index: 1;
-            position: relative;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
         }
-        .project-label::before, .project-label::after {
-            content: ''; position: absolute; width: 5px; height: 5px; border: 1px solid var(--primary-gold);
-        }
-        .project-label::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .project-label::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
-        /* Glassmorphism Cards (Gold Edition) */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; max-width: 1200px; z-index: 1; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1300px; z-index: 1; }
+        /* Cards */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; }
         
         .card {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-top: 1px solid var(--glass-highlight);
-            border-radius: 4px; /* 角を少しだけ丸く */
+            border-radius: 8px;
             padding: 40px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 30px rgba(204, 164, 59, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
         }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(204, 164, 59, 0.2);
+            transform: translateY(-8px);
             border-color: var(--secondary-gold);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(204, 164, 59, 0.2);
+            background: rgba(20, 20, 20, 0.8);
         }
-        .card:hover::before { opacity: 1; }
-
-        .card-left { align-items: flex-start; text-align: left; }
-        .card-left p { text-align: left; font-size: 16px; }
 
         .icon-box { 
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, rgba(204, 164, 59, 0.15), rgba(0,0,0,0.2));
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px; 
-            color: var(--primary-gold); 
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, rgba(204,164,59,0.2), rgba(0,0,0,0.4));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: var(--primary-gold); 
             margin-bottom: 20px;
             border: 1px solid var(--glass-border);
-            box-shadow: inset 0 0 20px rgba(204, 164, 59, 0.1);
         }
 
-        /* Stats & Lists */
-        .stat-row { 
-            display: flex; 
-            justify-content: space-between; 
-            width: 100%; 
-            margin-top: 15px; 
-            border-bottom: 1px solid rgba(204, 164, 59, 0.2); 
-            padding-bottom: 12px; 
+        /* DB Terminal Style */
+        .db-terminal {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid #444;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            font-family: 'Roboto Mono', monospace;
         }
-        .stat-label { color: var(--text-muted); font-size: 15px; font-family: 'Zen Old Mincho', serif; }
-        .stat-value { color: var(--text-main); font-weight: 700; font-size: 18px; font-family: 'Cinzel', serif; }
-        .stat-value.highlight-price { color: var(--primary-gold); text-shadow: 0 0 10px rgba(204, 164, 59, 0.3); }
-
-        /* Use Case Diagram Styles (Gold Edition) */
-        .uc-container { 
-            display: grid; 
-            grid-template-columns: 1fr 320px 1fr; 
-            gap: 30px; 
-            width: 100%; 
-            max-width: 1300px; 
+        .db-header {
+            background: #2b2b2b;
+            padding: 12px 20px;
+            display: flex;
             align-items: center;
-            z-index: 1; 
+            border-bottom: 1px solid #333;
         }
-        .uc-col { display: flex; flex-direction: column; gap: 24px; align-items: center; }
+        .db-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
         
-        .uc-actor {
-            text-align: center;
-            margin-bottom: 10px;
+        .db-body {
+            padding: 0;
+            overflow-x: auto;
         }
-        
-        /* Actor Image Style */
-        .actor-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 15px rgba(204, 164, 59, 0.4);
-            margin-bottom: 10px;
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #dcdcdc;
+            font-size: 14px;
         }
-
-        .uc-actor i { 
-            font-size: 40px; 
-            background: linear-gradient(to bottom, var(--secondary-gold), var(--primary-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px; 
-            filter: drop-shadow(0 0 5px rgba(204, 164, 59, 0.5));
-        }
-        .uc-actor-name { 
-            font-family: 'Cinzel', serif;
-            font-size: 18px; 
-            font-weight: bold; 
-            color: var(--primary-gold); 
+        .db-table th {
+            text-align: left;
+            padding: 15px 20px;
+            border-bottom: 2px solid #444;
+            color: var(--primary-gold);
+            font-weight: bold;
             letter-spacing: 0.05em;
+            background: rgba(255,255,255,0.02);
         }
-        
-        .uc-box { 
-            background: rgba(26, 26, 26, 0.8); 
-            border: 1px solid var(--primary-gold); 
-            border-radius: 4px; 
-            padding: 16px 24px; 
-            width: 100%; 
-            text-align: center; 
-            font-size: 15px; 
-            color: #fff;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .db-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            vertical-align: top;
+        }
+        .db-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .db-table .id { color: #666; font-size: 12px; }
+        .db-table .name { font-weight: bold; color: #fff; font-size: 15px; }
+        .db-table .sub { font-size: 11px; color: #888; display: block; margin-top: 2px; font-weight: normal; }
+        .highlight-val { color: var(--secondary-gold); font-weight: bold; }
+        .tag {
+            display: inline-block;
+            background: rgba(204, 164, 59, 0.15);
+            color: var(--secondary-gold);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            border: 1px solid rgba(204, 164, 59, 0.2);
+        }
+
+        /* Note Section for Database */
+        .db-notes {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 20px;
+            justify-content: flex-start;
         }
-        
-        /* Arrows (Gold) */
-        .uc-box::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 25px;
-            height: 2px;
-            background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
-            box-shadow: 0 0 5px var(--primary-gold);
-        }
-        .uc-col:first-child .uc-box::after { right: -30px; }
-        .uc-col:last-child .uc-box::after { left: -30px; }
-        
-        .uc-system { 
-            background: linear-gradient(180deg, rgba(204, 164, 59, 0.1) 0%, rgba(26, 26, 26, 0.8) 100%);
-            border: 2px solid var(--primary-gold); 
-            border-radius: 8px; 
-            height: 400px; 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
-            position: relative;
-            box-shadow: 0 0 50px rgba(204, 164, 59, 0.2), inset 0 0 20px rgba(204, 164, 59, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        .uc-system-title { 
-            font-family: 'Cinzel', serif; 
-            color: #fff; 
-            font-size: 22px; 
-            margin-bottom: 30px; 
-            font-weight: 700;
-            text-shadow: 0 0 10px var(--primary-gold);
-        }
-        
-        .uc-core-function { 
-            background: rgba(204, 164, 59, 0.05); 
-            border: 1px solid rgba(204, 164, 59, 0.3); 
-            padding: 12px 20px; 
-            margin: 10px; 
-            border-radius: 4px; 
-            width: 85%; 
-            font-size: 14px; 
-            text-align: center; 
-            color: #fff;
+        .note-item {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #ccc;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
             gap: 10px;
+            flex: 1;
+        }
+        .note-item i {
+            color: var(--primary-gold);
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        .note-title {
+            color: #fff;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
             font-family: 'Zen Old Mincho', serif;
         }
-        .uc-core-function i { color: var(--primary-gold); }
 
-        /* Demo Phone Mockup (Gold Frame) */
-        .phone-mockup {
-            width: 300px;
-            height: 500px;
-            border: 4px solid var(--secondary-gold); /* ゴールドのフレーム */
-            border-radius: 40px;
-            background: #000;
+        /* Slide 4: Workflow Specifics */
+        .workflow-container {
+            display: grid;
+            grid-template-columns: 1fr 100px auto 100px 1fr;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+            justify-items: center;
+        }
+        
+        .workflow-side { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 30px; 
+            width: 100%;
+        }
+        
+        .action-card {
             position: relative;
+            height: 250px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .action-card:hover { transform: scale(1.02); border-color: var(--secondary-gold); }
+        .action-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
+        video.action-img { outline: none; border: none; }
+        
+        .action-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px; text-align: left;
+            pointer-events: none;
+        }
+        .action-title { color: var(--secondary-gold); font-family: 'Zen Old Mincho', serif; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+        .action-desc { color: #fff; font-size: 14px; }
+        .action-icon {
+            position: absolute; top: 15px; right: 15px;
+            width: 40px; height: 40px; background: rgba(0,0,0,0.6); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            z-index: 5;
+        }
+        
+        .sound-toggle {
+            position: absolute; top: 15px; left: 15px;
+            width: 40px; height: 40px; 
+            background: rgba(255,255,255,0.2); 
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; border: 1px solid rgba(255,255,255,0.5);
+            z-index: 10;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sound-toggle:hover { background: rgba(204, 164, 59, 0.8); border-color: var(--primary-gold); }
+
+        /* Data Flow Animation */
+        .flow-connector {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        
+        .flow-stream {
+            position: absolute;
+            top: 0; left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+            filter: drop-shadow(0 0 5px var(--primary-gold));
+            animation: flowStream 1.5s infinite linear;
+        }
+        
+        .flow-connector.reverse .flow-stream {
+            animation: flowStreamReverse 1.5s infinite linear;
+        }
+        
+        .flow-stream.delay-1 { animation-delay: 0.75s; width: 30%; opacity: 0.7; }
+
+        @keyframes flowStream {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+        @keyframes flowStreamReverse {
+            0% { transform: translateX(300%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .center-system {
+            background: linear-gradient(180deg, rgba(30,30,30,0.95), rgba(0,0,0,0.95));
+            border: 2px solid var(--primary-gold);
+            border-radius: 50%;
+            width: 200px; height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            /* Pulse Animation */
+            animation: systemPulse 3s infinite ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @keyframes systemPulse {
+            0% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(212, 175, 55, 0.5), inset 0 0 20px rgba(212, 175, 55, 0.2); border-color: #ffe6a0; }
+            100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+        }
+
+        /* Demo Slide Styles */
+        .demo-phone-img {
+            max-height: 600px;
+            width: auto;
+            max-width: 100%;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.8));
+            transition: transform 0.3s;
+        }
+        .demo-phone-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .demo-check-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 3px solid var(--primary-gold);
+            background: linear-gradient(90deg, rgba(204, 164, 59, 0.1), transparent);
+        }
+        .demo-check-title {
+            color: var(--primary-gold);
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 40px rgba(204, 164, 59, 0.4);
-            overflow: hidden;
+            gap: 12px;
+            font-family: 'Zen Old Mincho', serif;
         }
-        .phone-notch {
-            position: absolute; top: 0; width: 120px; height: 25px; background: #111;
-            border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 2;
-            border-bottom: 1px solid rgba(204, 164, 59, 0.2);
-        }
-        .chat-screen {
-            width: 100%; height: 100%; 
-            background: #111214; /* Darker background for LINE dark mode */
-            padding: 40px 15px 15px;
-            display: flex; flex-direction: column; gap: 10px; font-size: 12px;
-        }
-        /* Chat Message with Avatar support */
-        .chat-row {
-            display: flex;
-            gap: 8px;
-            max-width: 90%;
-            align-items: flex-end;
-        }
-        .chat-row.right {
-            align-self: flex-end;
-            justify-content: flex-end;
-        }
-        .chat-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #444;
-            flex-shrink: 0;
-        }
-        .chat-msg { 
-            padding: 10px 14px; 
-            border-radius: 18px; 
-            font-family: 'Noto Sans JP', sans-serif; 
-            font-size: 13px; 
-            line-height: 1.5; 
-            position: relative;
-        }
-        .chat-left { 
-            background: #2b2b2b; 
-            border-top-left-radius: 4px; 
-            color: #ddd; 
-            border: 1px solid #333; 
-        }
-        .chat-right { 
-            background: var(--line-green); 
-            border-top-right-radius: 4px; 
-            color: #fff; 
-            font-weight: 500;
+        .demo-check-text {
+            color: #ddd;
+            font-size: 16px;
+            padding-left: 32px;
         }
 
-        /* Print Settings */
-        @media print {
-            @page { size: landscape; margin: 0; }
-            body { background-color: #fff !important; color: #000; }
-            .slide { 
-                page-break-after: always; 
-                height: 100vh; 
-                width: 100%;
-                background: #fff !important;
-                border: none;
-            }
-            .slide::before { display: none; }
-            h1, h2, h3, p, .stat-value, .uc-actor i, .uc-system-title { color: #000 !important; text-shadow: none !important; -webkit-text-fill-color: initial !important; background: none !important; }
-            .card, .uc-box, .uc-system { background: #fff !important; border: 1px solid #ccc !important; box-shadow: none !important; }
-            .icon-box { background: #eee !important; color: #000 !important; border: 1px solid #ccc !important; }
-            .uc-system { border: 2px solid #000 !important; }
-            .phone-mockup { border-color: #000; box-shadow: none; }
-            .chat-screen { background: #f0f0f0; background-image: none; }
-            .chat-left { background: #fff; color: #000; border: 1px solid #ccc; }
-            .chat-right { background: #06c755 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
-            h2::after, .uc-box::after, .project-label, .project-label::before, .project-label::after { background: #000 !important; border-color: #000 !important; box-shadow: none !important;}
-            .stat-row { border-bottom-color: #ccc; }
-            .highlight { color: #000; background: transparent; font-weight: bold; text-decoration: underline; }
-            .stat-value.highlight-price { color: #000; }
-            .actor-img, .chat-avatar { border: 1px solid #ccc; box-shadow: none; }
-        }
     </style>
+    <script>
+        // Sound toggle function
+        function toggleSound(btn) {
+            const video = btn.parentElement.querySelector('video');
+            const icon = btn.querySelector('i');
+            
+            if (video.muted) {
+                video.muted = false;
+                icon.classList.remove('fa-volume-xmark');
+                icon.classList.add('fa-volume-high');
+            } else {
+                video.muted = true;
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-xmark');
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -475,215 +477,310 @@
 
         <!-- Slide 1: Title -->
         <div class="slide" id="s1">
-            <div class="logo-container">
-                <!-- ロゴ画像の配置: 高さを基準に調整し、大きくなりすぎるのを防ぎつつ存在感を出す -->
-                <img src="logo.png" alt="The Base Logo" class="logo-img">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="logo-container">
+                    <img src="logo.png" alt="The Base Logo" class="logo-img" onerror="this.onerror=null; this.src='https://placehold.co/400x160/transparent/CCA43B?text=The+Base';">
+                </div>
+                <div class="project-label">PROPOSAL FOR THE BASE</div>
+                <h1>DIGITAL<br>CHEE-MAMA</h1>
+                <p style="font-family: 'Zen Old Mincho', serif; font-size: 24px; color: #eee;">
+                    「記憶」と「気遣い」をAIが継承する。<br>
+                    新橋の夜を変える、最強の右腕システム。
+                </p>
             </div>
-            <div class="project-label">PROPOSAL FOR THE BASE</div>
-            <h1>DIGITAL<br>CHEE-MAMA</h1>
-            <p style="margin-top: 20px; font-size: 22px; color: #fff; font-family: 'Zen Old Mincho', serif;">
-                新橋の夜を、もっとスマートに。<br>
-                <span style="color: var(--primary-gold);">「記憶」と「気遣い」をAIが継承する</span>、<br>
-                The Base 特化型・右腕システム
-            </p>
         </div>
 
         <!-- Slide 2: Pain Points -->
         <div class="slide" id="s2">
-            <h2>ママ、一人で背負いすぎていませんか？</h2>
-            <div class="grid-2">
-                <div class="card">
-                    <div class="icon-box"><i class="fa-solid fa-brain"></i></div>
-                    <h3>記憶力の限界への挑戦</h3>
-                    <p>「あのお客様のボトル、何だっけ？」<br>「前回、何の歌を歌ったっけ？」<br>数百人の常連様の好みを、全てママ一人の頭で管理するのは限界があります。</p>
-                </div>
-                <div class="card">
-                    <div class="icon-box"><i class="fa-solid fa-user-clock"></i></div>
-                    <h3>育たない新人・ヘルプ</h3>
-                    <p>新しく入った子が、常連様と会話が続かない。<br>お客様の情報を共有する時間もなく、結局ママが全部フォローすることに…。</p>
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>ママ、一人で背負いすぎていませんか？</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-brain"></i></div>
+                        <h3>記憶力の限界</h3>
+                        <p>数百人の常連様のボトル、好きな曲、前回の会話。<br>これら全てをママ一人の記憶に頼るのは、あまりにもリスクが高い状態です。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-user-clock"></i></div>
+                        <h3>属人化する接客</h3>
+                        <p>「ママがいないと分からない」<br>新人のヘルプの子が、常連様と会話が続かない。<br>情報の共有不足が、サービスの質のバラつきを生んでいます。</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Slide 3: Concept -->
         <div class="slide" id="s3">
-            <h2>「デジタル・チーママ」が解決します</h2>
-            <p style="margin-bottom: 50px; font-family: 'Zen Old Mincho', serif;">LINEの中に、24時間働く「優秀なチーママ（AI）」を雇いませんか？<br>新しいアプリは不要。いつものLINEで会話するだけです。</p>
-            
-            <div class="grid-3">
-                <div class="card">
-                    <div class="icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
-                    <h3>1. 喋るだけ日報</h3>
-                    <p>閉店後のタクシーで。<br>「今日、田中さんがマッカラン入れたよ」と呟くだけで、AIが勝手に顧客台帳を更新します。</p>
-                </div>
-                <div class="card">
-                    <div class="icon-box"><i class="fa-solid fa-compact-disc"></i></div>
-                    <h3>2. カラオケ管理</h3>
-                    <p>「西本さんの十八番は？」と聞けば、AIが即答。<br>ヘルプの子でも、常連様の好みに合わせた曲を入れられます。</p>
-                </div>
-                <div class="card">
-                    <div class="icon-box"><i class="fa-regular fa-paper-plane"></i></div>
-                    <h3>3. 営業LINE代筆</h3>
-                    <p>「最近ご無沙汰の竹田さん、どう誘う？」<br>AIが過去の会話を元に、自然で返信しやすいお誘いLINEを作ります。</p>
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>「デジタル・チーママ」が解決します</h2>
+                <p style="margin-bottom: 50px;">LINEの中に、24時間働く「優秀なチーママ（AI）」を雇用。<br>特別なアプリは不要。いつものLINEで会話するだけです。</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
+                        <h3>1. 喋るだけ日報</h3>
+                        <p>「今日、田中さんがマッカラン入れたよ」<br>帰りのタクシーで呟くだけ。AIが自動で顧客台帳を更新します。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-compact-disc"></i></div>
+                        <h3>2. 瞬時に情報共有</h3>
+                        <p>「西本さんの十八番は？」<br>ヘルプの子でも、AIに聞けば常連様の好みを即座に把握できます。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-regular fa-paper-plane"></i></div>
+                        <h3>3. 営業LINE作成</h3>
+                        <p>「最近ご無沙汰の竹田さんにLINEしたい」<br>AIが過去の会話履歴から、自然で心のこもった文面を代筆します。</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 4: Workflow (Use Case) -->
+        <!-- Slide 4: Workflow -->
         <div class="slide" id="s4">
-            <h2>利用イメージ・ワークフロー</h2>
-            <div class="uc-container">
-                <div class="uc-col">
-                    <div class="uc-actor">
-                        <!-- 画像を追加 -->
-                        <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="actor-img" alt="Staff/Mama" onerror="this.onerror=null; this.src='https://placehold.co/80x80/222/CCA43B?text=Mama'">
-                        <div class="uc-actor-name">Staff / Mama</div>
-                        <div style="font-size:12px; color:var(--text-muted); font-family: 'Zen Old Mincho', serif;">The Base スタッフ</div>
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>利用イメージ・ワークフロー</h2>
+                <div class="workflow-container">
+                    <!-- Left: Text Input (Local Image) -->
+                    <div class="workflow-side">
+                        <div class="action-card">
+                            <!-- Local Image Source -->
+                            <img src="./text_input.jpg" class="action-img" alt="Woman Texting">
+                            <div class="action-icon"><i class="fa-solid fa-keyboard"></i></div>
+                            <div class="action-overlay">
+                                <div class="action-title">テキスト入力</div>
+                                <div class="action-desc">
+                                    「この前のボトル何だっけ？」<br>
+                                    接客中のふとした疑問をLINEで送信。<br>
+                                    数秒でAIが回答します。
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">
-                        <i class="fa-solid fa-mobile-screen-button" style="font-size: 24px; color: var(--secondary-gold); display: block; margin-bottom: 8px;"></i>
-                        「この前のボトル何？」<br>とLINEで質問
+
+                    <!-- Flow Connector (Left -> Center) -->
+                    <div class="flow-connector">
+                        <div class="flow-stream"></div>
+                        <div class="flow-stream delay-1"></div>
                     </div>
-                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">
-                        <i class="fa-solid fa-microphone-lines" style="font-size: 24px; color: var(--secondary-gold); display: block; margin-bottom: 8px;"></i>
-                        お客様の来店を<br>音声で報告
+
+                    <!-- Center: System -->
+                    <div class="center-system">
+                        <i class="fa-solid fa-microchip" style="font-size: 50px; color: var(--primary-gold); margin-bottom: 10px;"></i>
+                        <div style="font-family:'Cinzel'; color:#fff; font-weight:bold; font-size:18px; text-align:center;">DIGITAL<br>CHEE-MAMA</div>
                     </div>
-                </div>
-                <div class="uc-system">
-                    <div class="uc-system-title"><i class="fa-solid fa-microchip"></i> DIGITAL CHEE-MAMA</div>
-                    <div class="uc-core-function"><i class="fa-solid fa-database"></i> 顧客DB (ボトル/カラオケ)</div>
-                    <div class="uc-core-function"><i class="fa-solid fa-robot"></i> 接客アドバイス生成</div>
-                    <div class="uc-core-function"><i class="fa-solid fa-bell"></i> 誕生日・来店アラート</div>
-                </div>
-                <div class="uc-col">
-                    <div class="uc-actor">
-                        <i class="fa-solid fa-shop"></i>
-                        <div class="uc-actor-name">The Base Asset</div>
-                        <div style="font-size:12px; color:var(--text-muted); font-family: 'Zen Old Mincho', serif;">店舗の資産化</div>
+
+                    <!-- Flow Connector (Right -> Center) -->
+                    <div class="flow-connector reverse">
+                        <div class="flow-stream"></div>
+                        <div class="flow-stream delay-1"></div>
                     </div>
-                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">誰でもわかる<br>顧客リスト</div>
-                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">スタッフ育成の<br>自動化</div>
+
+                    <!-- Right: Voice Input (Local Video with Sound Button) -->
+                    <div class="workflow-side">
+                        <div class="action-card">
+                            <!-- Sound Toggle Button -->
+                            <div class="sound-toggle" onclick="toggleSound(this)">
+                                <i class="fa-solid fa-volume-xmark"></i>
+                            </div>
+                            
+                            <!-- Video Implementation (Local File) -->
+                            <video class="action-img" src="./movie.mp4" autoplay loop muted playsinline poster="./voice_poster.jpg">
+                                <img src="./voice_poster.jpg" class="action-img" alt="Woman Speaking Fallback">
+                            </video>
+                            
+                            <div class="action-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                            <!-- Right aligned overlay text -->
+                            <div class="action-overlay" style="text-align: right;">
+                                <div class="action-title">音声レポート</div>
+                                <div class="action-desc">
+                                    「田中さん、マッカラン入れたよ」<br>
+                                    閉店後のタクシーや更衣室で。<br>
+                                    喋るだけで顧客台帳が更新されます。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 5: Implementation Flow (Replaces Cost) -->
+        <!-- Slide 5: Database Detail (Multiple Customers) -->
         <div class="slide" id="s5">
-            <h2>面倒な設定は、すべてお任せください</h2>
-            <p style="margin-bottom: 40px; font-family: 'Zen Old Mincho', serif;">
-                デジタルに詳しくなくても大丈夫。<br>
-                The Base 様は、今の接客スタイルを変えることなく導入いただけます。
-            </p>
-            
-            <div class="grid-3">
-                <div class="card">
-                    <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-comments"></i></div>
-                    <h3>1. ヒアリング</h3>
-                    <p>現在の顧客管理方法や、特に大切にしている常連様について、少しだけお話を聞かせてください。</p>
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2><i class="fa-solid fa-server" style="color: var(--primary-gold); margin-right: 15px;"></i>裏側で蓄積される「資産」</h2>
+                <p style="margin-bottom: 30px;">AIが裏側で自動構築・更新し続ける、貴店だけの顧客データベースです。<br>この情報資産が、未来のスタッフ全員の武器になります。</p>
+                
+                <div class="db-terminal">
+                    <div class="db-header">
+                        <div class="db-dot red"></div><div class="db-dot yellow"></div><div class="db-dot green"></div>
+                        <span style="margin-left: 15px; font-family: monospace; font-size: 12px; color: #aaa;">admin@thebase-db:~/customers/list</span>
+                    </div>
+                    <div class="db-body">
+                        <table class="db-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NAME</th>
+                                    <th>BOTTLE (Keep)</th>
+                                    <th>FAVORITE SONGS</th>
+                                    <th>TAGS</th>
+                                    <th>LAST VISIT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="id">001</td>
+                                    <td class="name">田中 健一<br><span class="sub">〇〇不動産</span></td>
+                                    <td>Macallan 12Y <span class="highlight-val">40%</span></td>
+                                    <td>TSUNAMI<br>innocent world</td>
+                                    <td><span class="tag">#接待</span> <span class="tag">#個室</span></td>
+                                    <td>2025-11-20</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">002</td>
+                                    <td class="name">西本 誠<br><span class="sub">ITベンチャー</span></td>
+                                    <td>Yamazaki 18Y <span class="highlight-val">10%</span></td>
+                                    <td>残酷な天使のテーゼ<br>HANABI</td>
+                                    <td><span class="tag">#カウンター</span> <span class="tag">#一人</span></td>
+                                    <td>2026-01-02</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">003</td>
+                                    <td class="name">竹田 勇気<br><span class="sub">広告代理店</span></td>
+                                    <td>吉四六 <span class="highlight-val">New</span></td>
+                                    <td>Lemon<br>真夏の果実</td>
+                                    <td><span class="tag">#同伴</span> <span class="tag">#喫煙</span></td>
+                                    <td>2025-11-28</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">004</td>
+                                    <td class="name">山本 優子<br><span class="sub">美容経営</span></td>
+                                    <td>KRUG <span class="highlight-val">Empty</span></td>
+                                    <td>First Love<br>M</td>
+                                    <td><span class="tag">#女子会</span> <span class="tag">#誕生日</span></td>
+                                    <td>2026-01-01</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-laptop-code"></i></div>
-                    <h3>2. 専任構築</h3>
-                    <p>エンジニアがAIに「The Baseの流儀」を学習させます。<br>難しい設定はすべて私たちが代行します。</p>
+
+                <!-- Added Note Section -->
+                <div class="db-notes">
+                    <div class="note-item">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <div>
+                            <span class="note-title">柔軟なカスタマイズ</span>
+                            リストの項目は、貴店の運用に合わせて自由に追加・変更が可能です。<br>（例：タバコの銘柄、家族構成、NG話題など）
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <div>
+                            <span class="note-title">安心の閲覧制限機能</span>
+                            この顧客リストは、オーナー様が指定した特定のスタッフのみが閲覧できるよう、<br>厳格なアクセス制限をかけることができます。
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="icon-box" style="border-radius:50%; background: linear-gradient(135deg, rgba(6, 199, 85, 0.2), rgba(0,0,0,0.2)); color:#06c755; border-color: rgba(6, 199, 85, 0.4);"><i class="fa-brands fa-line"></i></div>
-                    <h3>3. 利用開始</h3>
-                    <p>準備ができたら、LINEで友達追加するだけ。<br>明日からすぐに「優秀なチーママ」が働き始めます。</p>
+
+            </div>
+        </div>
+
+        <!-- Slide 6: Implementation -->
+        <div class="slide" id="s6">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>導入までの3ステップ</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-comments"></i></div>
+                        <h3>1. ヒアリング</h3>
+                        <p>現在の顧客管理方法や、特に大切にしている常連様について、少しだけお話を聞かせてください。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-laptop-code"></i></div>
+                        <h3>2. 専任構築</h3>
+                        <p>エンジニアがAIに「The Baseの流儀」を学習させます。<br>面倒な設定はすべて私たちが代行します。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%; background: linear-gradient(135deg, rgba(6,199,85,0.2), rgba(0,0,0,0.4)); color:#06c755;"><i class="fa-brands fa-line"></i></div>
+                        <h3>3. 利用開始</h3>
+                        <p>準備ができたら、LINEで友達追加するだけ。<br>明日からすぐに「優秀なチーママ」が働き始めます。</p>
+                    </div>
                 </div>
             </div>
-            
-            <div style="margin-top: 40px; padding: 25px 40px; border: 1px solid var(--primary-gold); background: rgba(204, 164, 59, 0.1); border-radius: 8px; max-width: 900px; width: 100%;">
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <!-- Security Section -->
-                    <div style="display: flex; align-items: start;">
-                        <i class="fa-solid fa-lock" style="margin-right:15px; color:var(--primary-gold); font-size: 20px; margin-top: 3px;"></i>
-                        <div>
-                            <p style="margin:0; color: #fff; font-family: 'Zen Old Mincho', serif; font-size: 16px; text-align: left; font-weight: 700;">
-                                特定のLINEアカウントのみアクセス可能（完全招待制）
-                            </p>
-                            <p style="margin:5px 0 0; font-size: 14px; color: var(--text-muted); text-align: left;">
-                                事前に登録されたスタッフ（ママ・チーママ等）のLINE IDでのみ利用可能です。<br>
-                                万が一URLを知られても、部外者は一切アクセスできませんのでご安心ください。
-                            </p>
+        </div>
+
+        <!-- Slide 7: Demo Intro -->
+        <div class="slide" id="s7">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="grid-2" style="align-items: center;">
+                    <div style="text-align: left;">
+                        <h2 style="text-align: left; margin-bottom: 30px;">実際の画面をご覧ください</h2>
+                        <p style="text-align: left; margin-bottom: 40px; font-family: 'Zen Old Mincho', serif;">
+                            この後、スマホ実機を用いて<br>以下の流れを実演いたします。
+                        </p>
+                        
+                        <div class="demo-check-item">
+                            <div class="demo-check-title">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                                音声登録のデモ
+                            </div>
+                            <div class="demo-check-text">
+                                「田中さん、マッカラン入れたよ」と話しかけるだけで<br>
+                                AIが内容を理解し、台帳へ自動登録する様子。
+                            </div>
+                        </div>
+
+                        <div class="demo-check-item">
+                            <div class="demo-check-title">
+                                <i class="fa-brands fa-line" style="color: #06c755;"></i>
+                                LINE照会のデモ
+                            </div>
+                            <div class="demo-check-text">
+                                トーク画面で「田中さん」と検索するだけで、<br>
+                                ボトル情報や好みの曲を一瞬で呼び出す様子。
+                            </div>
                         </div>
                     </div>
                     
-                    <div style="width: 100%; height: 1px; background: rgba(204, 164, 59, 0.3);"></div>
-
-                    <!-- Customization Section -->
-                    <div style="display: flex; align-items: start;">
-                        <i class="fa-solid fa-circle-plus" style="margin-right:15px; color:var(--primary-gold); font-size: 20px; margin-top: 3px;"></i>
-                        <div>
-                            <p style="margin:0; color: #fff; font-family: 'Zen Old Mincho', serif; font-size: 16px; text-align: left; font-weight: 700;">
-                                管理項目のカスタマイズ
-                            </p>
-                            <p style="margin:5px 0 0; font-size: 14px; color: var(--text-muted); text-align: left;">
-                                デジタルチーママの管理情報は、ご要望に応じて追加・カスタマイズが可能です。<br>
-                                （例：タバコの銘柄、NG話題、家族構成など ※内容は応相談）
-                            </p>
-                        </div>
+                    <div style="display: flex; justify-content: center;">
+                        <!-- Real Phone Image (User Provided) -->
+                        <img src="./real_phone.png" class="demo-phone-img" alt="Demo Smartphone" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:300px;height:500px;border:2px dashed #666;display:flex;align-items:center;justify-content:center;color:#888;\'>real_phone.png not found</div>';">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 6: Demo Intro (LINE Style) -->
-        <div class="slide" id="s6">
-            <div class="grid-2" style="align-items: center;">
-                <div style="text-align: left;">
-                    <h2 style="text-align: left; margin-bottom: 20px;">実際の画面を<br>ご覧ください</h2>
-                    <p style="text-align: left; margin-bottom: 30px; font-family: 'Zen Old Mincho', serif;">
-                        この後、スマホで実演します。<br>
-                        「ボトルの写真を送るだけ」でAIが認識する様子や、
-                        「気の利いたお礼状」を一瞬で作る様子をご覧ください。
-                    </p>
-                    <p class="highlight" style="display: inline-block; font-family: 'Zen Old Mincho', serif;">これは「未来の話」ではなく、今日から使える技術です。</p>
-                    <p style="font-size:12px; color:#666; text-align:left; margin-top:15px; font-family: 'Noto Sans JP', sans-serif;">※画像認識と来店記録データベースを照合して回答します。</p>
-                </div>
-                <div style="display: flex; justify-content: center;">
-                    <div class="phone-mockup">
-                        <div class="phone-notch"></div>
-                        <div class="chat-screen">
-                            <div style="text-align: center; color: #888; margin-bottom: 10px; font-size: 10px;">今日 23:45</div>
-                            
-                            <!-- Chat Row Right -->
-                            <div class="chat-row right">
-                                <div class="chat-msg chat-right">田中さんのボトル何だっけ？<br><span style="font-size:10px; opacity:0.8;">既読 23:45</span></div>
-                            </div>
-                            
-                            <!-- Chat Row Left (with Avatar) -->
-                            <div class="chat-row">
-                                <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="chat-avatar" alt="AI" onerror="this.onerror=null; this.src='https://placehold.co/40x40/222/CCA43B?text=AI'">
-                                <div class="chat-msg chat-left">田中様ですね。<br>前回（12/10）マッカラン12年を入れています。<br>退店時の記録では、残量は半分ほどです。<br><span style="font-size:10px; color:#888;">23:45</span></div>
-                            </div>
-
-                            <div class="chat-row right">
-                                <div class="chat-msg chat-right">了解！カラオケは何が好き？<br><span style="font-size:10px; opacity:0.8;">既読 23:46</span></div>
-                            </div>
-
-                            <div class="chat-row">
-                                <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="chat-avatar" alt="AI" onerror="this.onerror=null; this.src='https://placehold.co/40x40/222/CCA43B?text=AI'">
-                                <div class="chat-msg chat-left">サザンの「TSUNAMI」と、ミスチルの「innocent world」をよく歌われます。<br><span style="font-size:10px; color:#888;">23:46</span></div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+        <!-- Slide 8: Closing -->
+        <div class="slide" id="s8">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h1>PARTNERSHIP</h1>
+                <div style="width: 150px; height: 4px; background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold)); margin: 30px 0; box-shadow: 0 0 20px var(--primary-gold);"></div>
+                <p style="font-size: 24px; color: #fff; font-family: 'Zen Old Mincho', serif; line-height: 2;">
+                    The Base の「温かい接客」を、<br>
+                    最新のテクノロジーが「黒衣」として支えます。
+                </p>
+                <br><br>
+                <p style="font-size: 30px; font-weight: 700; color: var(--primary-gold); font-family: 'Zen Old Mincho', serif;">
+                    このシステムを、貴店の資産にしませんか？
+                </p>
             </div>
-        </div>
-
-        <!-- Slide 7: Closing -->
-        <div class="slide" id="s7">
-            <h1 style="font-size: 60px; text-shadow: 0 0 30px rgba(204, 164, 59, 0.5); color: var(--primary-gold); -webkit-text-fill-color: initial;">PARTNERSHIP</h1>
-            <div style="width: 150px; height: 4px; background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold)); margin: 30px 0; box-shadow: 0 0 20px var(--primary-gold); border-radius: 2px;"></div>
-            <p style="font-size: 24px; color: #fff; font-family: 'Zen Old Mincho', serif; line-height: 2;">
-                The Base には、独自の「温かさ」があります。<br>
-                ITで冷たく管理するのではなく、<br>
-                ママの温かい接客を支える「黒衣（くろご）」として。
-            </p>
-            <br><br>
-            <p style="font-size: 32px; font-weight: 700; color: var(--primary-gold); font-family: 'Zen Old Mincho', serif; text-shadow: 0 0 10px rgba(204, 164, 59, 0.3);">このシステムを、貴店のお客様のために役立てませんか？</p>
         </div>
 
     </div>
