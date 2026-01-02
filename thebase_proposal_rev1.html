@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal for The Base: Digital Chee-Mama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- フォント構成: 高級感のある明朝体とセリフ体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            /* 高級感のある黒とゴールドのカラーパレット */
+            --bg-dark: #000000;
+            --primary-gold: #CCA43B;  /* Rich Gold */
+            --secondary-gold: #F4E2B0; /* Pale Gold */
+            --accent-dark: #111111;
+            
+            --text-main: #FFFFFF;
+            --text-muted: #CCCCCC;
+            --text-gold: #CCA43B;
+
+            --glass-bg: rgba(0, 0, 0, 0.65); /* 背景を透かす黒 */
+            --glass-border: rgba(204, 164, 59, 0.3); 
+            --glass-highlight: rgba(255, 255, 255, 0.1);
+            
+            --line-green: #06c755;
+            
+            /* Table Colors */
+            --table-header-bg: rgba(204, 164, 59, 0.1);
+            --table-row-hover: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Slide Container */
+        .slide-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            min-height: 800px;
+            position: relative;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            padding: 4rem 6rem;
+            page-break-after: always;
+            border-bottom: 1px solid #222;
+            overflow: hidden;
+        }
+
+        /* 背景画像設定 */
+        .slide-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            filter: brightness(0.4) blur(2px);
+            transform: scale(1.05);
+        }
+        
+        /* グラデーションオーバーレイ */
+        .slide-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20,20,20,0.6) 100%);
+            z-index: 1;
+        }
+
+        /* Slide Specific Backgrounds (Updated) */
+        #s1 .slide-bg { background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=2070&auto=format&fit=crop'); filter: brightness(0.5); }
+        #s2 .slide-bg { background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?q=80&w=2070&auto=format&fit=crop'); }
+        #s3 .slide-bg { background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2070&auto=format&fit=crop'); }
+        #s4 .slide-bg { background-image: url('https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=2070&auto=format&fit=crop'); }
+        #s5 .slide-bg { background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop'); }
+        #s6 .slide-bg { background-image: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2070&auto=format&fit=crop'); }
+        #s7 .slide-bg { background-image: url('https://images.unsplash.com/photo-1535303311164-664fc9ec6532?q=80&w=2070&auto=format&fit=crop'); }
+        #s8 .slide-bg { background-image: url('https://images.unsplash.com/photo-1569937756447-e25c0fb7598f?q=80&w=2070&auto=format&fit=crop'); }
+
+        /* コンテンツラッパー */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1 { 
+            font-family: 'Cinzel', serif; 
+            font-size: 90px; 
+            font-weight: 900;
+            color: #fff;
+            text-align: center; 
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            background: linear-gradient(to bottom, #fff 30%, var(--primary-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 { 
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 46px; 
+            margin-bottom: 3.5rem; 
+            text-align: center; 
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            border-bottom: 3px solid var(--primary-gold);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        h3 { 
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 24px; 
+            color: var(--primary-gold); 
+            margin-bottom: 1rem; 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        p { 
+            font-size: 18px; 
+            line-height: 1.9; 
+            color: var(--text-muted); 
+            text-align: center; 
+            max-width: 800px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .project-label {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            letter-spacing: 0.4em;
+            color: var(--secondary-gold);
+            border: 1px solid var(--secondary-gold);
+            padding: 10px 24px;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Cards */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; }
+        
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 40px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--secondary-gold);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(204, 164, 59, 0.2);
+            background: rgba(20, 20, 20, 0.8);
+        }
+
+        .icon-box { 
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, rgba(204,164,59,0.2), rgba(0,0,0,0.4));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: var(--primary-gold); 
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* DB Terminal Style */
+        .db-terminal {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid #444;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            font-family: 'Roboto Mono', monospace;
+        }
+        .db-header {
+            background: #2b2b2b;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .db-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        
+        .db-body {
+            padding: 0;
+            overflow-x: auto;
+        }
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #dcdcdc;
+            font-size: 14px;
+        }
+        .db-table th {
+            text-align: left;
+            padding: 15px 20px;
+            border-bottom: 2px solid #444;
+            color: var(--primary-gold);
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            background: rgba(255,255,255,0.02);
+        }
+        .db-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            vertical-align: top;
+        }
+        .db-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .db-table .id { color: #666; font-size: 12px; }
+        .db-table .name { font-weight: bold; color: #fff; font-size: 15px; }
+        .db-table .sub { font-size: 11px; color: #888; display: block; margin-top: 2px; font-weight: normal; }
+        .highlight-val { color: var(--secondary-gold); font-weight: bold; }
+        .tag {
+            display: inline-block;
+            background: rgba(204, 164, 59, 0.15);
+            color: var(--secondary-gold);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            border: 1px solid rgba(204, 164, 59, 0.2);
+        }
+
+        /* Note Section for Database */
+        .db-notes {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 20px;
+            justify-content: flex-start;
+        }
+        .note-item {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #ccc;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex: 1;
+        }
+        .note-item i {
+            color: var(--primary-gold);
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        .note-title {
+            color: #fff;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            font-family: 'Zen Old Mincho', serif;
+        }
+
+        /* Slide 4: Workflow Specifics */
+        .workflow-container {
+            display: grid;
+            grid-template-columns: 1fr 100px auto 100px 1fr;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+            justify-items: center;
+        }
+        
+        .workflow-side { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 30px; 
+            width: 100%;
+        }
+        
+        .action-card {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .action-card:hover { transform: scale(1.02); border-color: var(--secondary-gold); }
+        .action-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
+        video.action-img { outline: none; border: none; }
+        
+        .action-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px; text-align: left;
+            pointer-events: none;
+        }
+        .action-title { color: var(--secondary-gold); font-family: 'Zen Old Mincho', serif; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+        .action-desc { color: #fff; font-size: 14px; }
+        .action-icon {
+            position: absolute; top: 15px; right: 15px;
+            width: 40px; height: 40px; background: rgba(0,0,0,0.6); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            z-index: 5;
+        }
+        
+        .sound-toggle {
+            position: absolute; top: 15px; left: 15px;
+            width: 40px; height: 40px; 
+            background: rgba(255,255,255,0.2); 
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; border: 1px solid rgba(255,255,255,0.5);
+            z-index: 10;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sound-toggle:hover { background: rgba(204, 164, 59, 0.8); border-color: var(--primary-gold); }
+
+        /* Data Flow Animation */
+        .flow-connector {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        
+        .flow-stream {
+            position: absolute;
+            top: 0; left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+            filter: drop-shadow(0 0 5px var(--primary-gold));
+            animation: flowStream 1.5s infinite linear;
+        }
+        
+        .flow-connector.reverse .flow-stream {
+            animation: flowStreamReverse 1.5s infinite linear;
+        }
+        
+        .flow-stream.delay-1 { animation-delay: 0.75s; width: 30%; opacity: 0.7; }
+
+        @keyframes flowStream {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+        @keyframes flowStreamReverse {
+            0% { transform: translateX(300%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .center-system {
+            background: linear-gradient(180deg, rgba(30,30,30,0.95), rgba(0,0,0,0.95));
+            border: 2px solid var(--primary-gold);
+            border-radius: 50%;
+            width: 200px; height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            /* Pulse Animation */
+            animation: systemPulse 3s infinite ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+        
+        @keyframes systemPulse {
+            0% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(212, 175, 55, 0.5), inset 0 0 20px rgba(212, 175, 55, 0.2); border-color: #ffe6a0; }
+            100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+        }
+
+        /* Demo Slide Styles */
+        .demo-phone-img {
+            max-height: 600px;
+            width: auto;
+            max-width: 100%;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.8));
+            transition: transform 0.3s;
+        }
+        .demo-phone-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .demo-check-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 3px solid var(--primary-gold);
+            background: linear-gradient(90deg, rgba(204, 164, 59, 0.1), transparent);
+        }
+        .demo-check-title {
+            color: var(--primary-gold);
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Zen Old Mincho', serif;
+        }
+        .demo-check-text {
+            color: #ddd;
+            font-size: 16px;
+            padding-left: 32px;
+        }
+
+    </style>
+    <script>
+        // Sound toggle function
+        function toggleSound(btn) {
+            const video = btn.parentElement.querySelector('video');
+            const icon = btn.querySelector('i');
+            
+            if (video.muted) {
+                video.muted = false;
+                icon.classList.remove('fa-volume-xmark');
+                icon.classList.add('fa-volume-high');
+            } else {
+                video.muted = true;
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-xmark');
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="slide-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide" id="s1">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="logo-container">
+                    <img src="logo.png" alt="The Base Logo" class="logo-img" onerror="this.onerror=null; this.src='https://placehold.co/400x160/transparent/CCA43B?text=The+Base';">
+                </div>
+                <div class="project-label">PROPOSAL FOR THE BASE</div>
+                <h1>DIGITAL<br>CHEE-MAMA</h1>
+                <p style="font-family: 'Zen Old Mincho', serif; font-size: 24px; color: #eee;">
+                    「記憶」と「気遣い」をAIが継承する。<br>
+                    新橋の夜を変える、最強の右腕システム。
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Pain Points -->
+        <div class="slide" id="s2">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>ママ、一人で背負いすぎていませんか？</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-brain"></i></div>
+                        <h3>記憶力の限界</h3>
+                        <p>数百人の常連様のボトル、好きな曲、前回の会話。<br>これら全てをママ一人の記憶に頼るのは、あまりにもリスクが高い状態です。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-user-clock"></i></div>
+                        <h3>属人化する接客</h3>
+                        <p>「ママがいないと分からない」<br>新人のヘルプの子が、常連様と会話が続かない。<br>情報の共有不足が、サービスの質のバラつきを生んでいます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Concept -->
+        <div class="slide" id="s3">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>「デジタル・チーママ」が解決します</h2>
+                <p style="margin-bottom: 50px;">LINEの中に、24時間働く「優秀なチーママ（AI）」を雇用。<br>特別なアプリは不要。いつものLINEで会話するだけです。</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
+                        <h3>1. 喋るだけ日報</h3>
+                        <p>「今日、田中さんがマッカラン入れたよ」<br>帰りのタクシーで呟くだけ。AIが自動で顧客台帳を更新します。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-solid fa-compact-disc"></i></div>
+                        <h3>2. 瞬時に情報共有</h3>
+                        <p>「西本さんの十八番は？」<br>ヘルプの子でも、AIに聞けば常連様の好みを即座に把握できます。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fa-regular fa-paper-plane"></i></div>
+                        <h3>3. 営業LINE作成</h3>
+                        <p>「最近ご無沙汰の竹田さんにLINEしたい」<br>AIが過去の会話履歴から、自然で心のこもった文面を代筆します。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Workflow -->
+        <div class="slide" id="s4">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>利用イメージ・ワークフロー</h2>
+                <div class="workflow-container">
+                    <!-- Left: Text Input (Local Image) -->
+                    <div class="workflow-side">
+                        <div class="action-card">
+                            <!-- Local Image Source -->
+                            <img src="./text_input.jpg" class="action-img" alt="Woman Texting">
+                            <div class="action-icon"><i class="fa-solid fa-keyboard"></i></div>
+                            <div class="action-overlay">
+                                <div class="action-title">テキスト入力</div>
+                                <div class="action-desc">
+                                    「この前のボトル何だっけ？」<br>
+                                    接客中のふとした疑問をLINEで送信。<br>
+                                    数秒でAIが回答します。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Connector (Left -> Center) -->
+                    <div class="flow-connector">
+                        <div class="flow-stream"></div>
+                        <div class="flow-stream delay-1"></div>
+                    </div>
+
+                    <!-- Center: System -->
+                    <div class="center-system">
+                        <i class="fa-solid fa-microchip" style="font-size: 50px; color: var(--primary-gold); margin-bottom: 10px;"></i>
+                        <div style="font-family:'Cinzel'; color:#fff; font-weight:bold; font-size:18px; text-align:center;">DIGITAL<br>CHEE-MAMA</div>
+                    </div>
+
+                    <!-- Flow Connector (Right -> Center) -->
+                    <div class="flow-connector reverse">
+                        <div class="flow-stream"></div>
+                        <div class="flow-stream delay-1"></div>
+                    </div>
+
+                    <!-- Right: Voice Input (Local Video with Sound Button) -->
+                    <div class="workflow-side">
+                        <div class="action-card">
+                            <!-- Sound Toggle Button -->
+                            <div class="sound-toggle" onclick="toggleSound(this)">
+                                <i class="fa-solid fa-volume-xmark"></i>
+                            </div>
+                            
+                            <!-- Video Implementation (Local File) -->
+                            <video class="action-img" src="./movie.mp4" autoplay loop muted playsinline poster="./voice_poster.jpg">
+                                <img src="./voice_poster.jpg" class="action-img" alt="Woman Speaking Fallback">
+                            </video>
+                            
+                            <div class="action-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                            <!-- Right aligned overlay text -->
+                            <div class="action-overlay" style="text-align: right;">
+                                <div class="action-title">音声レポート</div>
+                                <div class="action-desc">
+                                    「田中さん、マッカラン入れたよ」<br>
+                                    閉店後のタクシーや更衣室で。<br>
+                                    喋るだけで顧客台帳が更新されます。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Database Detail (Multiple Customers) -->
+        <div class="slide" id="s5">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2><i class="fa-solid fa-server" style="color: var(--primary-gold); margin-right: 15px;"></i>裏側で蓄積される「資産」</h2>
+                <p style="margin-bottom: 30px;">AIが裏側で自動構築・更新し続ける、貴店だけの顧客データベースです。<br>この情報資産が、未来のスタッフ全員の武器になります。</p>
+                
+                <div class="db-terminal">
+                    <div class="db-header">
+                        <div class="db-dot red"></div><div class="db-dot yellow"></div><div class="db-dot green"></div>
+                        <span style="margin-left: 15px; font-family: monospace; font-size: 12px; color: #aaa;">admin@thebase-db:~/customers/list</span>
+                    </div>
+                    <div class="db-body">
+                        <table class="db-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NAME</th>
+                                    <th>BOTTLE (Keep)</th>
+                                    <th>FAVORITE SONGS</th>
+                                    <th>TAGS</th>
+                                    <th>LAST VISIT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="id">001</td>
+                                    <td class="name">田中 健一<br><span class="sub">〇〇不動産</span></td>
+                                    <td>Macallan 12Y <span class="highlight-val">40%</span></td>
+                                    <td>TSUNAMI<br>innocent world</td>
+                                    <td><span class="tag">#接待</span> <span class="tag">#個室</span></td>
+                                    <td>2025-11-20</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">002</td>
+                                    <td class="name">西本 誠<br><span class="sub">ITベンチャー</span></td>
+                                    <td>Yamazaki 18Y <span class="highlight-val">10%</span></td>
+                                    <td>残酷な天使のテーゼ<br>HANABI</td>
+                                    <td><span class="tag">#カウンター</span> <span class="tag">#一人</span></td>
+                                    <td>2026-01-02</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">003</td>
+                                    <td class="name">竹田 勇気<br><span class="sub">広告代理店</span></td>
+                                    <td>吉四六 <span class="highlight-val">New</span></td>
+                                    <td>Lemon<br>真夏の果実</td>
+                                    <td><span class="tag">#同伴</span> <span class="tag">#喫煙</span></td>
+                                    <td>2025-11-28</td>
+                                </tr>
+                                <tr>
+                                    <td class="id">004</td>
+                                    <td class="name">山本 優子<br><span class="sub">美容経営</span></td>
+                                    <td>KRUG <span class="highlight-val">Empty</span></td>
+                                    <td>First Love<br>M</td>
+                                    <td><span class="tag">#女子会</span> <span class="tag">#誕生日</span></td>
+                                    <td>2026-01-01</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Added Note Section -->
+                <div class="db-notes">
+                    <div class="note-item">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <div>
+                            <span class="note-title">柔軟なカスタマイズ</span>
+                            リストの項目は、貴店の運用に合わせて自由に追加・変更が可能です。<br>（例：タバコの銘柄、家族構成、NG話題など）
+                        </div>
+                    </div>
+                    <div class="note-item">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <div>
+                            <span class="note-title">安心の閲覧制限機能</span>
+                            この顧客リストは、オーナー様が指定した特定のスタッフのみが閲覧できるよう、<br>厳格なアクセス制限をかけることができます。
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Slide 6: Implementation -->
+        <div class="slide" id="s6">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h2>導入までの3ステップ</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-comments"></i></div>
+                        <h3>1. ヒアリング</h3>
+                        <p>現在の顧客管理方法や、特に大切にしている常連様について、少しだけお話を聞かせてください。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-laptop-code"></i></div>
+                        <h3>2. 専任構築</h3>
+                        <p>エンジニアがAIに「The Baseの流儀」を学習させます。<br>面倒な設定はすべて私たちが代行します。</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box" style="border-radius:50%; background: linear-gradient(135deg, rgba(6,199,85,0.2), rgba(0,0,0,0.4)); color:#06c755;"><i class="fa-brands fa-line"></i></div>
+                        <h3>3. 利用開始</h3>
+                        <p>準備ができたら、LINEで友達追加するだけ。<br>明日からすぐに「優秀なチーママ」が働き始めます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Demo Intro -->
+        <div class="slide" id="s7">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="grid-2" style="align-items: center;">
+                    <div style="text-align: left;">
+                        <h2 style="text-align: left; margin-bottom: 30px;">実際の画面をご覧ください</h2>
+                        <p style="text-align: left; margin-bottom: 40px; font-family: 'Zen Old Mincho', serif;">
+                            この後、スマホ実機を用いて<br>以下の流れを実演いたします。
+                        </p>
+                        
+                        <div class="demo-check-item">
+                            <div class="demo-check-title">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                                音声登録のデモ
+                            </div>
+                            <div class="demo-check-text">
+                                「田中さん、マッカラン入れたよ」と話しかけるだけで<br>
+                                AIが内容を理解し、台帳へ自動登録する様子。
+                            </div>
+                        </div>
+
+                        <div class="demo-check-item">
+                            <div class="demo-check-title">
+                                <i class="fa-brands fa-line" style="color: #06c755;"></i>
+                                LINE照会のデモ
+                            </div>
+                            <div class="demo-check-text">
+                                トーク画面で「田中さん」と検索するだけで、<br>
+                                ボトル情報や好みの曲を一瞬で呼び出す様子。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center;">
+                        <!-- Real Phone Image (User Provided) -->
+                        <img src="./real_phone.png" class="demo-phone-img" alt="Demo Smartphone" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:300px;height:500px;border:2px dashed #666;display:flex;align-items:center;justify-content:center;color:#888;\'>real_phone.png not found</div>';">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Closing -->
+        <div class="slide" id="s8">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <h1>PARTNERSHIP</h1>
+                <div style="width: 150px; height: 4px; background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold)); margin: 30px 0; box-shadow: 0 0 20px var(--primary-gold);"></div>
+                <p style="font-size: 24px; color: #fff; font-family: 'Zen Old Mincho', serif; line-height: 2;">
+                    The Base の「温かい接客」を、<br>
+                    最新のテクノロジーが「黒衣」として支えます。
+                </p>
+                <br><br>
+                <p style="font-size: 30px; font-weight: 700; color: var(--primary-gold); font-family: 'Zen Old Mincho', serif;">
+                    このシステムを、貴店の資産にしませんか？
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
