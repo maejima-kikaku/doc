@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Poker Range Trainer (MVP v2)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --card2:#0c1628;
+      --text:#e8eefc;
+      --muted:#a8b3d1;
+      --line:#24324f;
+      --ok:#2dd4bf;
+      --ng:#fb7185;
+      --warn:#fbbf24;
+      --btn:#1c2a46;
+      --btn2:#223458;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+      margin: 22px;
+      line-height: 1.35;
+      background: radial-gradient(1200px 700px at 20% 0%, #16264a 0%, var(--bg) 60%);
+      color: var(--text);
+    }
+    h1{ margin:0 0 10px; font-size: 20px; letter-spacing:.3px; }
+    h2{ margin:0 0 10px; font-size: 16px; }
+    .muted{ color: var(--muted); }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    .split{ display:grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 980px){ .split{ grid-template-columns: 1.15fr .85fr; } }
+
+    .card{
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .row{ display:flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; align-items:flex-end; }
+    label{ display:flex; flex-direction: column; font-size: 12px; gap: 6px; min-width: 160px; }
+    select, input{
+      padding: 10px 12px;
+      font-size: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--card2);
+      color: var(--text);
+      outline: none;
+    }
+    input::placeholder{ color: #7f8bb0; }
+
+    button{
+      padding: 10px 12px;
+      font-size: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--btn2), var(--btn));
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    button:hover{ filter: brightness(1.05); }
+    button:active{ transform: translateY(1px); }
+    button.primary{ border-color: rgba(45,212,191,.45); }
+    button.danger{ border-color: rgba(251,113,133,.45); }
+    button.ghost{ background: transparent; box-shadow:none; }
+    button:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255,255,255,.03);
+      margin-right: 6px;
+      margin-top: 6px;
+    }
+    .pill.ok{ border-color: rgba(45,212,191,.45); }
+    .pill.ng{ border-color: rgba(251,113,133,.45); }
+    .pill.warn{ border-color: rgba(251,191,36,.55); }
+
+    .resultBox{
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(0,0,0,.18);
+      margin-top: 12px;
+    }
+    .okText{ color: var(--ok); font-weight: 800; }
+    .ngText{ color: var(--ng); font-weight: 800; }
+    .warnText{ color: var(--warn); font-weight: 800; }
+
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .bar > div{ height: 100%; width: 0%; background: linear-gradient(90deg, var(--ok), #60a5fa); }
+    .small{ font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <h1>ポーカー学習用：プリフロ判定アプリ（v2）</h1>
+  <div class="muted">ポジション＋ハンド → RFI（誰も入ってない時のオープン）判定。10問連続で正答率と弱点を出す。</div>
+
+  <div class="split">
+    <!-- Judge -->
+    <div class="card">
+      <h2>判定</h2>
+      <div class="row">
+        <label>人数/形式
+          <select id="tableType">
+            <option value="6max">6-max</option>
+            <option value="8max">8-max</option>
+            <option value="HU">Heads-Up</option>
+          </select>
+        </label>
+
+        <label>スタック（目安）
+          <select id="stackBucket">
+            <option value="60">40〜60BB（標準）</option>
+            <option value="40">30〜40BB（やや浅め）</option>
+            <option value="24">20〜25BB（浅め）</option>
+          </select>
+        </label>
+
+        <label>ポジション
+          <select id="pos"></select>
+        </label>
+
+        <label>ハンド（例：KQs / AJo / 77）
+          <input id="hand" class="mono" placeholder="KQs" />
+        </label>
+
+        <button id="judgeBtn" class="primary">判定</button>
+      </div>
+
+      <div id="result" class="resultBox">
+        <div class="muted">ここに結果が出る。</div>
+      </div>
+
+      <div class="row">
+        <button id="resetStatsBtn" class="ghost">📌 学習ログをリセット</button>
+        <span class="small">※学習ログはこのブラウザ内に保存（localStorage）</span>
+      </div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="card">
+      <h2>10問連続（反射トレーニング）</h2>
+      <div class="muted">10問を連続で出題 → 正答率・弱点（落としがちなポジション/カテゴリ）を表示。</div>
+
+      <div class="row">
+        <label>クイズモード
+          <select id="quizMode">
+            <option value="mixed">ミックス</option>
+            <option value="border">境界線だけ（迷いやすい）</option>
+          </select>
+        </label>
+        <button id="start10Btn" class="primary">10問スタート</button>
+        <button id="stop10Btn" class="danger" disabled>中断</button>
+      </div>
+
+      <div id="quizBox" class="resultBox">
+        <div class="muted">「10問スタート」を押して。</div>
+      </div>
+
+      <div class="row">
+        <button id="ansOpenBtn" class="primary" disabled>オープン</button>
+        <button id="ansFoldBtn" class="danger" disabled>フォールド</button>
+        <button id="showAnsBtn" disabled>答えを見る</button>
+        <button id="nextBtn" disabled>次へ</button>
+      </div>
+
+      <div id="quizFeedback" class="muted"></div>
+
+      <div class="resultBox" style="margin-top:12px;">
+        <h2 style="margin:0 0 8px;">成績（全体）</h2>
+        <div id="overallStats" class="muted">まだデータがありません。</div>
+        <div class="bar" style="margin-top:10px;"><div id="accBar"></div></div>
+
+        <h2 style="margin:14px 0 8px;">弱点（間違えやすいところ）</h2>
+        <div id="weakness" class="muted">まだ分析できません。</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========= Core helpers ========= */
+const POSITIONS = {
+  HU: ["BTN", "BB"],
+  "6max": ["UTG(HJ)", "MP", "CO", "BTN", "SB", "BB"],
+  "8max": ["UTG", "UTG+1", "MP", "HJ", "CO", "BTN", "SB", "BB"],
+};
+
+function setPosOptions() {
+  const tableType = document.getElementById("tableType").value;
+  const posSel = document.getElementById("pos");
+  posSel.innerHTML = "";
+  POSITIONS[tableType].forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    posSel.appendChild(opt);
+  });
+}
+document.getElementById("tableType").addEventListener("change", setPosOptions);
+setPosOptions();
+
+const RANKS = ["2","3","4","5","6","7","8","9","T","J","Q","K","A"];
+function rankIdx(r){ return RANKS.indexOf(r); }
+
+function parseHand(input) {
+  const s = (input || "").trim().toUpperCase();
+  if (/^[2-9TJQKA]{2}$/.test(s) && s[0] === s[1]) {
+    return { r1: s[0], r2: s[1], suited: null, pair: true, key: s };
+  }
+  const m = s.match(/^([2-9TJQKA])([2-9TJQKA])(S|O)?$/);
+  if (!m) return null;
+  let r1 = m[1], r2 = m[2];
+  if (rankIdx(r2) > rankIdx(r1)) [r1, r2] = [r2, r1];
+  const so = m[3] || "";
+  const suited = so === "S" ? true : (so === "O" ? false : null);
+  const pair = r1 === r2;
+  return { r1, r2, suited, pair, key: r1 + r2 + (suited===true?"S":suited===false?"O":"") };
+}
+
+/* ========= Range logic ========= */
+function matchPattern(hand, p) {
+  if (p === "ANY") return true;
+  if (p === hand.key) return true;
+
+  if (/^[2-9TJQKA]{2}\+$/.test(p) && p[0] === p[1]) {
+    if (!hand.pair) return false;
+    return rankIdx(hand.r1) >= rankIdx(p[0]);
+  }
+  if (/^[2-9TJQKA]{2}$/.test(p) && p[0] === p[1]) {
+    return hand.pair && hand.r1 === p[0];
+  }
+  if (/^[2-9TJQKA][2-9TJQKA][SO]$/.test(p)) {
+    const ph = parseHand(p);
+    return ph && hand.r1 === ph.r1 && hand.r2 === ph.r2 && hand.suited === ph.suited;
+  }
+  if (/^[2-9TJQKA][2-9TJQKA][SO]\+$/.test(p)) {
+    const ph = parseHand(p.slice(0,3));
+    if (!ph || hand.pair) return false;
+    if (hand.suited !== ph.suited) return false;
+    if (hand.r1 !== ph.r1) return false;
+    return rankIdx(hand.r2) >= rankIdx(ph.r2);
+  }
+  if (/^SC([2-9TJQKA])([2-9TJQKA])S\+$/.test(p)) {
+    const m = p.match(/^SC([2-9TJQKA])([2-9TJQKA])S\+$/);
+    const b = m[2];
+    if (hand.pair) return false;
+    if (hand.suited !== true) return false;
+    if (rankIdx(hand.r1) - rankIdx(hand.r2) !== 1) return false;
+    return rankIdx(hand.r2) >= rankIdx(b);
+  }
+  return false;
+}
+
+function isInRange(hand, patterns) {
+  for (const p of patterns) {
+    if (matchPattern(hand, p)) return true;
+  }
+  return false;
+}
+
+/* ========= Ranges (TAG-ish, amuse safe) ========= */
+const RANGES = {
+  "6max": {
+    "60": {
+      "UTG(HJ)": ["77+","AJS+","AQO+","KQS"],
+      "MP":      ["66+","ATS+","AJO+","KQS","QJS","JTS","SC76s+"],
+      "CO":      ["55+","A9O+","A5S+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S","SC76s+"],
+      "BTN":     ["22+","A2S+","A7O+","K9O+","K8S+","Q9O+","Q8S+","J9O+","J8S+","T8S+","SC65s+"],
+      "SB":      ["66+","ATS+","AJO+","KQS","QJS","JTS","T9S"],
+      "BB":      []
+    },
+    "40": {
+      "UTG(HJ)": ["88+","AQS+","AKO","KQS"],
+      "MP":      ["77+","AJS+","AQO+","KQS","QJS","JTS"],
+      "CO":      ["66+","ATS+","AJO+","KQS","KJS","QJS","JTS","T9S","A5S","A9O+"],
+      "BTN":     ["22+","A2S+","A9O+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S","98S"],
+      "SB":      ["77+","AJS+","AQO+","KQS"],
+      "BB":      []
+    },
+    "24": {
+      "UTG(HJ)": ["99+","AQO+","AQS+","KQS"],
+      "MP":      ["88+","AJO+","AJS+","KQS"],
+      "CO":      ["77+","ATS+","AJO+","KQS","QJS","JTS","A5S"],
+      "BTN":     ["55+","A8O+","A5S+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S"],
+      "SB":      ["88+","AJO+","AJS+","KQS"],
+      "BB":      []
+    }
+  },
+  "8max": {
+    "60": {
+      "UTG":   ["99+","AQS+","AQO+","KQS"],
+      "UTG+1": ["88+","AJS+","AQO+","KQS"],
+      "MP":    ["77+","ATS+","AJO+","KQS","QJS","JTS"],
+      "HJ":    ["66+","ATS+","AJO+","KQS","QJS","JTS","T9S","SC76s+"],
+      "CO":    ["55+","A9O+","A5S+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S","98S","SC76s+"],
+      "BTN":   ["22+","A2S+","A8O+","K9O+","K8S+","Q9O+","Q8S+","J9O+","J8S+","T8S+","SC65s+"],
+      "SB":    ["77+","AJS+","AQO+","KQS"],
+      "BB":    []
+    },
+    "40": {
+      "UTG":   ["TT+","AQO+","AQS+","KQS"],
+      "UTG+1": ["99+","AQO+","AJS+","KQS"],
+      "MP":    ["88+","AJS+","AQO+","KQS"],
+      "HJ":    ["77+","ATS+","AJO+","KQS","QJS","JTS","T9S"],
+      "CO":    ["66+","ATS+","AJO+","KTO+","QTO+","JTO","A5S","K9S+","Q9S+","J9S+","T9S","98S"],
+      "BTN":   ["33+","A5S+","A9O+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S","98S","87S"],
+      "SB":    ["99+","AQO+","AJS+","KQS"],
+      "BB":    []
+    },
+    "24": {
+      "UTG":   ["JJ+","AQO+","AQS+","KQS"],
+      "UTG+1": ["TT+","AQO+","AJS+","KQS"],
+      "MP":    ["99+","AJO+","AJS+","KQS"],
+      "HJ":    ["88+","ATS+","AJO+","KQS","QJS","JTS","A5S"],
+      "CO":    ["77+","ATS+","AJO+","KTO+","QTO+","JTO","A5S"],
+      "BTN":   ["66+","A8O+","A5S+","KTO+","K9S+","QTO+","Q9S+","JTO","J9S+","T9S"],
+      "SB":    ["TT+","AQO+","AJS+","KQS"],
+      "BB":    []
+    }
+  },
+  "HU": {
+    "60": { "BTN": ["ANY"], "BB": [] },
+    "40": { "BTN": ["ANY"], "BB": [] },
+    "24": { "BTN": ["ANY"], "BB": [] }
+  }
+};
+
+function classifyHand(hand){
+  if (!hand) return "unknown";
+  if (hand.pair) return "pair";
+  const high = hand.r1;
+  const low = hand.r2;
+  const suited = hand.suited === true ? "s" : (hand.suited === false ? "o" : "?");
+  const hiIdx = rankIdx(high), loIdx = rankIdx(low);
+
+  if (high === "A") {
+    if (loIdx >= rankIdx("T")) return "Ax strong (AT+)";
+    if (loIdx >= rankIdx("6")) return "Ax medium (A6-A9)";
+    return "Ax weak (A2-A5)";
+  }
+
+  const isBroadway = (r) => rankIdx(r) >= rankIdx("T");
+  if (isBroadway(high) && isBroadway(low)) return `broadway ${suited}`;
+
+  if (hand.suited === true && (hiIdx - loIdx === 1)) return "suited connector";
+  if (hand.suited === true && (hiIdx - loIdx === 2)) return "suited 1-gapper";
+
+  if (high === "K" && loIdx <= rankIdx("9")) return `weak Kx ${suited}`;
+  if (high === "Q" && loIdx <= rankIdx("9")) return `weak Qx ${suited}`;
+
+  return `other ${suited}`;
+}
+
+function judgeRFI(tableType, stackBucket, pos, handStr) {
+  const hand = parseHand(handStr);
+  if (!hand) return { ok:false, title:"入力形式エラー", detail:"例：KQs / AJo / 77 の形式で入力して。" };
+
+  const patterns = RANGES[tableType]?.[stackBucket]?.[pos];
+  if (!patterns) return { ok:false, title:"このポジションは判定対象外", detail:"MVPはまずRFI中心。BBディフェンス等は次で追加。" };
+
+  if (tableType === "HU" && pos === "BTN") {
+    return { ok:true, title:"OK：オープン推奨（HU）", detail:"HUのBTNはほぼ全ハンドでオープン（2〜2.5BB）。", tags:["HU","BTN","ANY"], meta:{handLabel:"ANY", cat:"HU BTN ANY", pos} };
+  }
+
+  const ok = isInRange(hand, patterns);
+  const handLabel = hand.pair ? hand.r1+hand.r2 : (hand.r1+hand.r2 + (hand.suited===true?"s":hand.suited===false?"o":""));
+  const cat = classifyHand(hand);
+
+  if (ok) {
+    return {
+      ok:true,
+      title:"OK：オープン推奨",
+      detail:`${pos}で${handLabel}は範囲内。基本は2.2〜2.5BBでオープン。抵抗が来たら無理に粘らず、強そうなら降りるのが“負けない”側。`,
+      tags:[`手:${handLabel}`,`分類:${cat}`,`モード:${tableType}/${stackBucket}BB`,`POS:${pos}`],
+      meta:{ handLabel, cat, pos }
+    };
+  } else {
+    return {
+      ok:false,
+      title:"NG：基本フォールド",
+      detail:`${pos}で${handLabel}はレンジ外。初心者帯は「参加回数を減らす」だけで勝率が上がる。弱いオフスートや弱いKx/Qxは事故要因。`,
+      tags:[`手:${handLabel}`,`分類:${cat}`,`モード:${tableType}/${stackBucket}BB`,`POS:${pos}`],
+      meta:{ handLabel, cat, pos }
+    };
+  }
+}
+
+/* ========= Judge UI ========= */
+function renderResult(res) {
+  const box = document.getElementById("result");
+  const cls = res.ok ? "okText" : "ngText";
+  const tagHtml = (res.tags||[]).map(t=>{
+    const c = res.ok ? "ok" : "ng";
+    return `<span class="pill ${c}">${t}</span>`;
+  }).join("");
+  box.innerHTML = `
+    <div class="${cls}" style="font-size:16px;">${res.title}</div>
+    <div style="margin-top:8px;">${res.detail}</div>
+    <div style="margin-top:10px;">${tagHtml}</div>
+  `;
+}
+
+document.getElementById("judgeBtn").addEventListener("click", () => {
+  const tableType = document.getElementById("tableType").value;
+  const stackBucket = document.getElementById("stackBucket").value;
+  const pos = document.getElementById("pos").value;
+  const hand = document.getElementById("hand").value;
+  const res = judgeRFI(tableType, stackBucket, pos, hand);
+  renderResult(res);
+});
+
+/* ========= Stats ========= */
+const STATS_KEY = "poker_trainer_stats_v2";
+
+function loadStats(){
+  try{
+    const raw = localStorage.getItem(STATS_KEY);
+    if (!raw) return { total:0, correct:0, byPos:{}, byCat:{} };
+    return JSON.parse(raw);
+  }catch{
+    return { total:0, correct:0, byPos:{}, byCat:{} };
+  }
+}
+function saveStats(s){ localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+
+function bump(map, key, correct){
+  if (!map[key]) map[key] = { total:0, correct:0 };
+  map[key].total += 1;
+  map[key].correct += correct ? 1 : 0;
+}
+
+function recordAttempt(meta, correct){
+  const stats = loadStats();
+  stats.total += 1;
+  stats.correct += correct ? 1 : 0;
+  bump(stats.byPos, meta.pos, correct);
+  bump(stats.byCat, meta.cat, correct);
+  saveStats(stats);
+  renderOverallAndWeakness();
+}
+
+function renderOverallAndWeakness(){
+  const stats = loadStats();
+  const overall = document.getElementById("overallStats");
+  const bar = document.getElementById("accBar");
+  const weak = document.getElementById("weakness");
+
+  if (!stats.total){
+    overall.textContent = "まだデータがありません。10問スタートで溜めていこう。";
+    bar.style.width = "0%";
+    weak.textContent = "まだ分析できません。";
+    return;
+  }
+
+  const acc = Math.round((stats.correct / stats.total) * 1000) / 10;
+  overall.innerHTML = `
+    <div>
+      <span class="pill ok">正解 ${stats.correct}</span>
+      <span class="pill ng">不正解 ${stats.total - stats.correct}</span>
+      <span class="pill warn">正答率 ${acc}%</span>
+    </div>
+    <div class="small" style="margin-top:6px;">全データ（クイズ回答）で集計。</div>
+  `;
+  bar.style.width = `${Math.min(100, Math.max(0, acc))}%`;
+
+  const minN = 6;
+  const posList = Object.entries(stats.byPos)
+    .filter(([,v])=>v.total>=minN)
+    .map(([k,v])=>({k, acc: v.correct/v.total, n:v.total}))
+    .sort((a,b)=>a.acc-b.acc)
+    .slice(0,3);
+
+  const catList = Object.entries(stats.byCat)
+    .filter(([,v])=>v.total>=minN)
+    .map(([k,v])=>({k, acc: v.correct/v.total, n:v.total}))
+    .sort((a,b)=>a.acc-b.acc)
+    .slice(0,3);
+
+  const fmt = (x)=>`${Math.round(x.acc*1000)/10}%（${x.n}問）`;
+
+  const posHtml = posList.length
+    ? `<div><span class="warnText">ポジション弱点</span><div class="small">${posList.map(x=>`・${x.k}: ${fmt(x)}`).join("<br>")}</div></div>`
+    : `<div class="small">ポジション別はサンプル不足（各${minN}問以上で分析）。</div>`;
+
+  const catHtml = catList.length
+    ? `<div style="margin-top:10px;"><span class="warnText">ハンド分類弱点</span><div class="small">${catList.map(x=>`・${x.k}: ${fmt(x)}`).join("<br>")}</div></div>`
+    : `<div class="small" style="margin-top:10px;">ハンド分類別はサンプル不足（各${minN}問以上で分析）。</div>`;
+
+  weak.innerHTML = posHtml + catHtml + `<div class="small" style="margin-top:10px;">※弱点は「正答率が低い順」。境界線モードでここを重点的に回す。</div>`;
+}
+
+document.getElementById("resetStatsBtn").addEventListener("click", ()=>{
+  localStorage.removeItem(STATS_KEY);
+  renderOverallAndWeakness();
+});
+
+/* ========= 10-question Quiz ========= */
+let quizState = {
+  active:false, idx:0, total:10,
+  current:null, revealed:false, answered:false,
+  tableType:"6max", stackBucket:"60", mode:"mixed"
+};
+
+function randomHandNotation(){
+  const r1 = RANKS[Math.floor(Math.random()*RANKS.length)];
+  const r2 = RANKS[Math.floor(Math.random()*RANKS.length)];
+  if (r1 === r2) return r1+r2;
+  const hi = rankIdx(r1) > rankIdx(r2) ? r1 : r2;
+  const lo = rankIdx(r1) > rankIdx(r2) ? r2 : r1;
+  const so = Math.random() < 0.5 ? "s" : "o";
+  return hi + lo + so;
+}
+
+function pickQuizQ(tableType, stackBucket, mode){
+  const posCandidates = POSITIONS[tableType].filter(p => (RANGES[tableType]?.[stackBucket]?.[p] !== undefined));
+  const usablePos = posCandidates.filter(p => p !== "BB");
+  const pos = usablePos[Math.floor(Math.random()*usablePos.length)];
+
+  for (let i=0;i<400;i++){
+    const h = randomHandNotation();
+    if (mode === "border"){
+      const hh = h.toUpperCase();
+      const borderline =
+        /^A[2-9][SO]$/.test(hh) || /^K[2-9]S$/.test(hh) || /^Q[2-9]S$/.test(hh) ||
+        /^KTO$/.test(hh) || /^QTO$/.test(hh) || /^JTO$/.test(hh) ||
+        /^T9S$/.test(hh) || /^98S$/.test(hh) || /^87S$/.test(hh) || /^76S$/.test(hh);
+      if (!borderline) continue;
+    }
+    const res = judgeRFI(tableType, stackBucket, pos, h);
+    return { pos, hand: h, res };
+  }
+  const fallback = randomHandNotation();
+  return { pos, hand: fallback, res: judgeRFI(tableType, stackBucket, pos, fallback) };
+}
+
+function renderQuizQ(){
+  const box = document.getElementById("quizBox");
+  const q = quizState.current;
+  box.innerHTML = `
+    <div class="row" style="margin:0;gap:8px;">
+      <span class="pill warn">Q${quizState.idx + 1}/${quizState.total}</span>
+      <span class="pill">POS: <b>${q.pos}</b></span>
+      <span class="pill">MODE: ${quizState.tableType}/${quizState.stackBucket}BB</span>
+    </div>
+    <div style="margin-top:10px;font-size:22px;" class="mono">HAND: <b>${q.hand.toUpperCase()}</b></div>
+    <div class="small" style="margin-top:8px;">「この手はオープンして良い？」だけ答える。</div>
+  `;
+}
+
+function setQuizButtons(active){
+  document.getElementById("ansOpenBtn").disabled = !active;
+  document.getElementById("ansFoldBtn").disabled = !active;
+  document.getElementById("showAnsBtn").disabled = !active;
+  document.getElementById("nextBtn").disabled = !active;
+  document.getElementById("stop10Btn").disabled = !active;
+}
+
+function start10(){
+  quizState.active = true;
+  quizState.idx = 0;
+  quizState.revealed = false;
+  quizState.answered = false;
+
+  quizState.tableType = document.getElementById("tableType").value;
+  quizState.stackBucket = document.getElementById("stackBucket").value;
+  quizState.mode = document.getElementById("quizMode").value;
+
+  document.getElementById("start10Btn").disabled = true;
+  setQuizButtons(true);
+  nextQ();
+  document.getElementById("quizFeedback").textContent = "10問連続スタート。迷ったらまだ反射じゃない。";
+}
+
+function stop10(){
+  quizState.active = false;
+  document.getElementById("start10Btn").disabled = false;
+  setQuizButtons(false);
+  document.getElementById("quizBox").innerHTML = `<div class="muted">中断しました。</div>`;
+  document.getElementById("quizFeedback").textContent = "";
+}
+
+function nextQ(){
+  if (!quizState.active) return;
+  if (quizState.idx >= quizState.total){ finish10(); return; }
+
+  quizState.current = pickQuizQ(quizState.tableType, quizState.stackBucket, quizState.mode);
+  quizState.revealed = false;
+  quizState.answered = false;
+  renderQuizQ();
+  document.getElementById("quizFeedback").textContent = "";
+}
+
+function finish10(){
+  quizState.active = false;
+  document.getElementById("start10Btn").disabled = false;
+  setQuizButtons(false);
+
+  document.getElementById("quizBox").innerHTML = `
+    <div class="okText" style="font-size:16px;">10問終了</div>
+    <div style="margin-top:8px;">弱点欄を見て、落としてるカテゴリを「境界線モード」で回すと伸びる。</div>
+  `;
+  document.getElementById("quizFeedback").textContent = "";
+}
+
+function revealAnswer(){
+  if (!quizState.active || !quizState.current) return;
+  quizState.revealed = true;
+  const res = quizState.current.res;
+  document.getElementById("quizFeedback").innerHTML =
+    `答え：<b class="${res.ok ? "okText":"ngText"}">${res.ok ? "オープン" : "フォールド"}</b> <span class="small">— ${res.detail}</span>`;
+}
+
+function answer(openChosen){
+  if (!quizState.active || !quizState.current) return;
+  if (quizState.answered) return;
+
+  const res = quizState.current.res;
+  const correct = (openChosen === res.ok);
+  quizState.answered = true;
+
+  if (res.meta) recordAttempt(res.meta, correct);
+
+  const msg = correct
+    ? `✅ 正解：${openChosen ? "オープン" : "フォールド"}`
+    : `❌ 不正解：正解は ${res.ok ? "オープン" : "フォールド"}`;
+
+  document.getElementById("quizFeedback").innerHTML =
+    `<span class="${correct ? "okText":"ngText"}">${msg}</span>
+     <div class="small" style="margin-top:6px;">${res.detail}</div>`;
+}
+
+function nextAfterAnswer(){
+  if (!quizState.active) return;
+  if (!quizState.answered && !quizState.revealed){
+    document.getElementById("quizFeedback").innerHTML =
+      `<span class="warnText">注意：</span><span class="small">答えずに次へ行くのは学習効率が落ちる。最低でも「オープン/フォールド」を押して。</span>`;
+    return;
+  }
+  quizState.idx += 1;
+  nextQ();
+}
+
+/* ========= Wire ========= */
+document.getElementById("start10Btn").addEventListener("click", start10);
+document.getElementById("stop10Btn").addEventListener("click", stop10);
+document.getElementById("showAnsBtn").addEventListener("click", revealAnswer);
+document.getElementById("ansOpenBtn").addEventListener("click", ()=>answer(true));
+document.getElementById("ansFoldBtn").addEventListener("click", ()=>answer(false));
+document.getElementById("nextBtn").addEventListener("click", nextAfterAnswer);
+
+renderOverallAndWeakness();
+</script>
+</body>
+</html>
