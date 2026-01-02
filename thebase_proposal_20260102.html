@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal for The Base: Digital Chee-Mama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- フォント構成: 高級感のある明朝体とセリフ体を採用 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            /* 高級感のある黒とゴールドのカラーパレット */
+            --bg-dark: #000000;       /* Pure Black */
+            --primary-gold: #CCA43B;  /* Rich Gold */
+            --secondary-gold: #E5C376; /* Lighter Gold */
+            --accent-dark: #1A1A1A;   /* Dark Charcoal */
+            
+            --text-main: #FFFFFF;     /* White */
+            --text-muted: #A0A0A0;    /* Warm Grey */
+            --text-gold: #CCA43B;     /* Gold Text */
+
+            --glass-bg: rgba(20, 20, 20, 0.7); /* より暗いグラス */
+            --glass-border: rgba(204, 164, 59, 0.4); /* ゴールドの境界線 */
+            --glass-highlight: rgba(229, 195, 118, 0.2); /* ゴールドのハイライト */
+            
+            /* LINE Color */
+            --line-green: #06c755;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Noto Sans JP', serif;
+            overflow-x: hidden;
+        }
+
+        /* Slide Container */
+        .slide-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            min-height: 720px;
+            position: relative;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            padding: 4rem 6rem;
+            page-break-after: always;
+            /* 背景デザイン: 黒とゴールドの高級感あるグラデーション */
+            background: radial-gradient(circle at 50% -20%, rgba(204, 164, 59, 0.2) 0%, transparent 60%),
+                        linear-gradient(135deg, var(--bg-dark) 0%, #111111 100%);
+            border-bottom: 1px solid #333;
+            overflow: hidden;
+        }
+
+        /* 装飾的な背景グリッド (繊細なゴールドの光) */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(204, 164, 59, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(204, 164, 59, 0.05) 1px, transparent 1px);
+            background-size: 100px 100px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        /* タイトルスライドの特別な背景 */
+        #s1 {
+            background: radial-gradient(circle at 70% 30%, rgba(204, 164, 59, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 30% 70%, rgba(204, 164, 59, 0.1) 0%, transparent 50%),
+                        linear-gradient(135deg, var(--bg-dark) 0%, #0a0a0a 100%);
+        }
+        
+        /* ロゴのスタイル修正 */
+        .logo-container {
+            margin-bottom: 3rem; /* 余白を広めに確保 */
+            z-index: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* ロゴ周りにほのかな光を与える */
+            filter: drop-shadow(0 0 15px rgba(204, 164, 59, 0.3));
+        }
+        .logo-img {
+            /* 幅ではなく高さを基準に制限することで、横長・縦長どちらのロゴでもバランスよく表示 */
+            max-height: 160px; 
+            max-width: 60%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* Typography */
+        h1 { 
+            font-family: 'Cinzel', serif; 
+            font-size: 80px; 
+            font-weight: 900;
+            background: linear-gradient(to right, #fff, var(--secondary-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center; 
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            z-index: 1;
+            text-shadow: 0 0 50px rgba(204, 164, 59, 0.3);
+        }
+        
+        h2 { 
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 42px; 
+            margin-bottom: 3rem; 
+            text-align: center; 
+            color: #fff;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+        }
+        
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
+            margin: 1.5rem auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
+
+        h3 { 
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 24px; 
+            color: var(--text-gold); 
+            margin-bottom: 1rem; 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p { 
+            font-size: 18px; 
+            line-height: 1.8; 
+            color: var(--text-muted); 
+            text-align: center; 
+            max-width: 900px;
+            z-index: 1;
+        }
+
+        .highlight { 
+            color: #fff; 
+            font-weight: 700; 
+            background: linear-gradient(transparent 70%, rgba(204, 164, 59, 0.4) 70%);
+            padding: 0 5px;
+        }
+
+        .project-label {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            letter-spacing: 0.3em;
+            color: var(--primary-gold);
+            border: 1px solid var(--primary-gold);
+            padding: 8px 16px;
+            border-radius: 0; /* 角を直角に */
+            margin-bottom: 2rem;
+            background: rgba(204, 164, 59, 0.1);
+            z-index: 1;
+            position: relative;
+        }
+        .project-label::before, .project-label::after {
+            content: ''; position: absolute; width: 5px; height: 5px; border: 1px solid var(--primary-gold);
+        }
+        .project-label::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .project-label::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* Glassmorphism Cards (Gold Edition) */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; max-width: 1200px; z-index: 1; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1300px; z-index: 1; }
+        
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-highlight);
+            border-radius: 4px; /* 角を少しだけ丸く */
+            padding: 40px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 30px rgba(204, 164, 59, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(204, 164, 59, 0.2);
+            border-color: var(--secondary-gold);
+        }
+        .card:hover::before { opacity: 1; }
+
+        .card-left { align-items: flex-start; text-align: left; }
+        .card-left p { text-align: left; font-size: 16px; }
+
+        .icon-box { 
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(204, 164, 59, 0.15), rgba(0,0,0,0.2));
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px; 
+            color: var(--primary-gold); 
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 0 20px rgba(204, 164, 59, 0.1);
+        }
+
+        /* Stats & Lists */
+        .stat-row { 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            margin-top: 15px; 
+            border-bottom: 1px solid rgba(204, 164, 59, 0.2); 
+            padding-bottom: 12px; 
+        }
+        .stat-label { color: var(--text-muted); font-size: 15px; font-family: 'Zen Old Mincho', serif; }
+        .stat-value { color: var(--text-main); font-weight: 700; font-size: 18px; font-family: 'Cinzel', serif; }
+        .stat-value.highlight-price { color: var(--primary-gold); text-shadow: 0 0 10px rgba(204, 164, 59, 0.3); }
+
+        /* Use Case Diagram Styles (Gold Edition) */
+        .uc-container { 
+            display: grid; 
+            grid-template-columns: 1fr 320px 1fr; 
+            gap: 30px; 
+            width: 100%; 
+            max-width: 1300px; 
+            align-items: center;
+            z-index: 1; 
+        }
+        .uc-col { display: flex; flex-direction: column; gap: 24px; align-items: center; }
+        
+        .uc-actor {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        /* Actor Image Style */
+        .actor-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-gold);
+            box-shadow: 0 0 15px rgba(204, 164, 59, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .uc-actor i { 
+            font-size: 40px; 
+            background: linear-gradient(to bottom, var(--secondary-gold), var(--primary-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px; 
+            filter: drop-shadow(0 0 5px rgba(204, 164, 59, 0.5));
+        }
+        .uc-actor-name { 
+            font-family: 'Cinzel', serif;
+            font-size: 18px; 
+            font-weight: bold; 
+            color: var(--primary-gold); 
+            letter-spacing: 0.05em;
+        }
+        
+        .uc-box { 
+            background: rgba(26, 26, 26, 0.8); 
+            border: 1px solid var(--primary-gold); 
+            border-radius: 4px; 
+            padding: 16px 24px; 
+            width: 100%; 
+            text-align: center; 
+            font-size: 15px; 
+            color: #fff;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* Arrows (Gold) */
+        .uc-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 25px;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
+            box-shadow: 0 0 5px var(--primary-gold);
+        }
+        .uc-col:first-child .uc-box::after { right: -30px; }
+        .uc-col:last-child .uc-box::after { left: -30px; }
+        
+        .uc-system { 
+            background: linear-gradient(180deg, rgba(204, 164, 59, 0.1) 0%, rgba(26, 26, 26, 0.8) 100%);
+            border: 2px solid var(--primary-gold); 
+            border-radius: 8px; 
+            height: 400px; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 50px rgba(204, 164, 59, 0.2), inset 0 0 20px rgba(204, 164, 59, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .uc-system-title { 
+            font-family: 'Cinzel', serif; 
+            color: #fff; 
+            font-size: 22px; 
+            margin-bottom: 30px; 
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--primary-gold);
+        }
+        
+        .uc-core-function { 
+            background: rgba(204, 164, 59, 0.05); 
+            border: 1px solid rgba(204, 164, 59, 0.3); 
+            padding: 12px 20px; 
+            margin: 10px; 
+            border-radius: 4px; 
+            width: 85%; 
+            font-size: 14px; 
+            text-align: center; 
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Zen Old Mincho', serif;
+        }
+        .uc-core-function i { color: var(--primary-gold); }
+
+        /* Demo Phone Mockup (Gold Frame) */
+        .phone-mockup {
+            width: 300px;
+            height: 500px;
+            border: 4px solid var(--secondary-gold); /* ゴールドのフレーム */
+            border-radius: 40px;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(204, 164, 59, 0.4);
+            overflow: hidden;
+        }
+        .phone-notch {
+            position: absolute; top: 0; width: 120px; height: 25px; background: #111;
+            border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 2;
+            border-bottom: 1px solid rgba(204, 164, 59, 0.2);
+        }
+        .chat-screen {
+            width: 100%; height: 100%; 
+            background: #111214; /* Darker background for LINE dark mode */
+            padding: 40px 15px 15px;
+            display: flex; flex-direction: column; gap: 10px; font-size: 12px;
+        }
+        /* Chat Message with Avatar support */
+        .chat-row {
+            display: flex;
+            gap: 8px;
+            max-width: 90%;
+            align-items: flex-end;
+        }
+        .chat-row.right {
+            align-self: flex-end;
+            justify-content: flex-end;
+        }
+        .chat-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #444;
+            flex-shrink: 0;
+        }
+        .chat-msg { 
+            padding: 10px 14px; 
+            border-radius: 18px; 
+            font-family: 'Noto Sans JP', sans-serif; 
+            font-size: 13px; 
+            line-height: 1.5; 
+            position: relative;
+        }
+        .chat-left { 
+            background: #2b2b2b; 
+            border-top-left-radius: 4px; 
+            color: #ddd; 
+            border: 1px solid #333; 
+        }
+        .chat-right { 
+            background: var(--line-green); 
+            border-top-right-radius: 4px; 
+            color: #fff; 
+            font-weight: 500;
+        }
+
+        /* Print Settings */
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body { background-color: #fff !important; color: #000; }
+            .slide { 
+                page-break-after: always; 
+                height: 100vh; 
+                width: 100%;
+                background: #fff !important;
+                border: none;
+            }
+            .slide::before { display: none; }
+            h1, h2, h3, p, .stat-value, .uc-actor i, .uc-system-title { color: #000 !important; text-shadow: none !important; -webkit-text-fill-color: initial !important; background: none !important; }
+            .card, .uc-box, .uc-system { background: #fff !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+            .icon-box { background: #eee !important; color: #000 !important; border: 1px solid #ccc !important; }
+            .uc-system { border: 2px solid #000 !important; }
+            .phone-mockup { border-color: #000; box-shadow: none; }
+            .chat-screen { background: #f0f0f0; background-image: none; }
+            .chat-left { background: #fff; color: #000; border: 1px solid #ccc; }
+            .chat-right { background: #06c755 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
+            h2::after, .uc-box::after, .project-label, .project-label::before, .project-label::after { background: #000 !important; border-color: #000 !important; box-shadow: none !important;}
+            .stat-row { border-bottom-color: #ccc; }
+            .highlight { color: #000; background: transparent; font-weight: bold; text-decoration: underline; }
+            .stat-value.highlight-price { color: #000; }
+            .actor-img, .chat-avatar { border: 1px solid #ccc; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide" id="s1">
+            <div class="logo-container">
+                <!-- ロゴ画像の配置: 高さを基準に調整し、大きくなりすぎるのを防ぎつつ存在感を出す -->
+                <img src="logo.png" alt="The Base Logo" class="logo-img">
+            </div>
+            <div class="project-label">PROPOSAL FOR THE BASE</div>
+            <h1>DIGITAL<br>CHEE-MAMA</h1>
+            <p style="margin-top: 20px; font-size: 22px; color: #fff; font-family: 'Zen Old Mincho', serif;">
+                新橋の夜を、もっとスマートに。<br>
+                <span style="color: var(--primary-gold);">「記憶」と「気遣い」をAIが継承する</span>、<br>
+                The Base 特化型・右腕システム
+            </p>
+        </div>
+
+        <!-- Slide 2: Pain Points -->
+        <div class="slide" id="s2">
+            <h2>ママ、一人で背負いすぎていませんか？</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="icon-box"><i class="fa-solid fa-brain"></i></div>
+                    <h3>記憶力の限界への挑戦</h3>
+                    <p>「あのお客様のボトル、何だっけ？」<br>「前回、何の歌を歌ったっけ？」<br>数百人の常連様の好みを、全てママ一人の頭で管理するのは限界があります。</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fa-solid fa-user-clock"></i></div>
+                    <h3>育たない新人・ヘルプ</h3>
+                    <p>新しく入った子が、常連様と会話が続かない。<br>お客様の情報を共有する時間もなく、結局ママが全部フォローすることに…。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Concept -->
+        <div class="slide" id="s3">
+            <h2>「デジタル・チーママ」が解決します</h2>
+            <p style="margin-bottom: 50px; font-family: 'Zen Old Mincho', serif;">LINEの中に、24時間働く「優秀なチーママ（AI）」を雇いませんか？<br>新しいアプリは不要。いつものLINEで会話するだけです。</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <div class="icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h3>1. 喋るだけ日報</h3>
+                    <p>閉店後のタクシーで。<br>「今日、田中さんがマッカラン入れたよ」と呟くだけで、AIが勝手に顧客台帳を更新します。</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fa-solid fa-compact-disc"></i></div>
+                    <h3>2. カラオケ管理</h3>
+                    <p>「西本さんの十八番は？」と聞けば、AIが即答。<br>ヘルプの子でも、常連様の好みに合わせた曲を入れられます。</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fa-regular fa-paper-plane"></i></div>
+                    <h3>3. 営業LINE代筆</h3>
+                    <p>「最近ご無沙汰の竹田さん、どう誘う？」<br>AIが過去の会話を元に、自然で返信しやすいお誘いLINEを作ります。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Workflow (Use Case) -->
+        <div class="slide" id="s4">
+            <h2>利用イメージ・ワークフロー</h2>
+            <div class="uc-container">
+                <div class="uc-col">
+                    <div class="uc-actor">
+                        <!-- 画像を追加 -->
+                        <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="actor-img" alt="Staff/Mama" onerror="this.onerror=null; this.src='https://placehold.co/80x80/222/CCA43B?text=Mama'">
+                        <div class="uc-actor-name">Staff / Mama</div>
+                        <div style="font-size:12px; color:var(--text-muted); font-family: 'Zen Old Mincho', serif;">The Base スタッフ</div>
+                    </div>
+                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">
+                        <i class="fa-solid fa-mobile-screen-button" style="font-size: 24px; color: var(--secondary-gold); display: block; margin-bottom: 8px;"></i>
+                        「この前のボトル何？」<br>とLINEで質問
+                    </div>
+                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">
+                        <i class="fa-solid fa-microphone-lines" style="font-size: 24px; color: var(--secondary-gold); display: block; margin-bottom: 8px;"></i>
+                        お客様の来店を<br>音声で報告
+                    </div>
+                </div>
+                <div class="uc-system">
+                    <div class="uc-system-title"><i class="fa-solid fa-microchip"></i> DIGITAL CHEE-MAMA</div>
+                    <div class="uc-core-function"><i class="fa-solid fa-database"></i> 顧客DB (ボトル/カラオケ)</div>
+                    <div class="uc-core-function"><i class="fa-solid fa-robot"></i> 接客アドバイス生成</div>
+                    <div class="uc-core-function"><i class="fa-solid fa-bell"></i> 誕生日・来店アラート</div>
+                </div>
+                <div class="uc-col">
+                    <div class="uc-actor">
+                        <i class="fa-solid fa-shop"></i>
+                        <div class="uc-actor-name">The Base Asset</div>
+                        <div style="font-size:12px; color:var(--text-muted); font-family: 'Zen Old Mincho', serif;">店舗の資産化</div>
+                    </div>
+                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">誰でもわかる<br>顧客リスト</div>
+                    <div class="uc-box" style="font-family: 'Zen Old Mincho', serif;">スタッフ育成の<br>自動化</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Implementation Flow (Replaces Cost) -->
+        <div class="slide" id="s5">
+            <h2>面倒な設定は、すべてお任せください</h2>
+            <p style="margin-bottom: 40px; font-family: 'Zen Old Mincho', serif;">
+                デジタルに詳しくなくても大丈夫。<br>
+                The Base 様は、今の接客スタイルを変えることなく導入いただけます。
+            </p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-comments"></i></div>
+                    <h3>1. ヒアリング</h3>
+                    <p>現在の顧客管理方法や、特に大切にしている常連様について、少しだけお話を聞かせてください。</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box" style="border-radius:50%;"><i class="fa-solid fa-laptop-code"></i></div>
+                    <h3>2. 専任構築</h3>
+                    <p>エンジニアがAIに「The Baseの流儀」を学習させます。<br>難しい設定はすべて私たちが代行します。</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box" style="border-radius:50%; background: linear-gradient(135deg, rgba(6, 199, 85, 0.2), rgba(0,0,0,0.2)); color:#06c755; border-color: rgba(6, 199, 85, 0.4);"><i class="fa-brands fa-line"></i></div>
+                    <h3>3. 利用開始</h3>
+                    <p>準備ができたら、LINEで友達追加するだけ。<br>明日からすぐに「優秀なチーママ」が働き始めます。</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; padding: 25px 40px; border: 1px solid var(--primary-gold); background: rgba(204, 164, 59, 0.1); border-radius: 8px; max-width: 900px; width: 100%;">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Security Section -->
+                    <div style="display: flex; align-items: start;">
+                        <i class="fa-solid fa-lock" style="margin-right:15px; color:var(--primary-gold); font-size: 20px; margin-top: 3px;"></i>
+                        <div>
+                            <p style="margin:0; color: #fff; font-family: 'Zen Old Mincho', serif; font-size: 16px; text-align: left; font-weight: 700;">
+                                特定のLINEアカウントのみアクセス可能（完全招待制）
+                            </p>
+                            <p style="margin:5px 0 0; font-size: 14px; color: var(--text-muted); text-align: left;">
+                                事前に登録されたスタッフ（ママ・チーママ等）のLINE IDでのみ利用可能です。<br>
+                                万が一URLを知られても、部外者は一切アクセスできませんのでご安心ください。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="width: 100%; height: 1px; background: rgba(204, 164, 59, 0.3);"></div>
+
+                    <!-- Customization Section -->
+                    <div style="display: flex; align-items: start;">
+                        <i class="fa-solid fa-circle-plus" style="margin-right:15px; color:var(--primary-gold); font-size: 20px; margin-top: 3px;"></i>
+                        <div>
+                            <p style="margin:0; color: #fff; font-family: 'Zen Old Mincho', serif; font-size: 16px; text-align: left; font-weight: 700;">
+                                管理項目のカスタマイズ
+                            </p>
+                            <p style="margin:5px 0 0; font-size: 14px; color: var(--text-muted); text-align: left;">
+                                デジタルチーママの管理情報は、ご要望に応じて追加・カスタマイズが可能です。<br>
+                                （例：タバコの銘柄、NG話題、家族構成など ※内容は応相談）
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Demo Intro (LINE Style) -->
+        <div class="slide" id="s6">
+            <div class="grid-2" style="align-items: center;">
+                <div style="text-align: left;">
+                    <h2 style="text-align: left; margin-bottom: 20px;">実際の画面を<br>ご覧ください</h2>
+                    <p style="text-align: left; margin-bottom: 30px; font-family: 'Zen Old Mincho', serif;">
+                        この後、スマホで実演します。<br>
+                        「ボトルの写真を送るだけ」でAIが認識する様子や、
+                        「気の利いたお礼状」を一瞬で作る様子をご覧ください。
+                    </p>
+                    <p class="highlight" style="display: inline-block; font-family: 'Zen Old Mincho', serif;">これは「未来の話」ではなく、今日から使える技術です。</p>
+                    <p style="font-size:12px; color:#666; text-align:left; margin-top:15px; font-family: 'Noto Sans JP', sans-serif;">※画像認識と来店記録データベースを照合して回答します。</p>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <div class="phone-mockup">
+                        <div class="phone-notch"></div>
+                        <div class="chat-screen">
+                            <div style="text-align: center; color: #888; margin-bottom: 10px; font-size: 10px;">今日 23:45</div>
+                            
+                            <!-- Chat Row Right -->
+                            <div class="chat-row right">
+                                <div class="chat-msg chat-right">田中さんのボトル何だっけ？<br><span style="font-size:10px; opacity:0.8;">既読 23:45</span></div>
+                            </div>
+                            
+                            <!-- Chat Row Left (with Avatar) -->
+                            <div class="chat-row">
+                                <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="chat-avatar" alt="AI" onerror="this.onerror=null; this.src='https://placehold.co/40x40/222/CCA43B?text=AI'">
+                                <div class="chat-msg chat-left">田中様ですね。<br>前回（12/10）マッカラン12年を入れています。<br>退店時の記録では、残量は半分ほどです。<br><span style="font-size:10px; color:#888;">23:45</span></div>
+                            </div>
+
+                            <div class="chat-row right">
+                                <div class="chat-msg chat-right">了解！カラオケは何が好き？<br><span style="font-size:10px; opacity:0.8;">既読 23:46</span></div>
+                            </div>
+
+                            <div class="chat-row">
+                                <img src="g068VwHeDBkVbcuG_Z8K_9340.webp" class="chat-avatar" alt="AI" onerror="this.onerror=null; this.src='https://placehold.co/40x40/222/CCA43B?text=AI'">
+                                <div class="chat-msg chat-left">サザンの「TSUNAMI」と、ミスチルの「innocent world」をよく歌われます。<br><span style="font-size:10px; color:#888;">23:46</span></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Closing -->
+        <div class="slide" id="s7">
+            <h1 style="font-size: 60px; text-shadow: 0 0 30px rgba(204, 164, 59, 0.5); color: var(--primary-gold); -webkit-text-fill-color: initial;">PARTNERSHIP</h1>
+            <div style="width: 150px; height: 4px; background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold)); margin: 30px 0; box-shadow: 0 0 20px var(--primary-gold); border-radius: 2px;"></div>
+            <p style="font-size: 24px; color: #fff; font-family: 'Zen Old Mincho', serif; line-height: 2;">
+                The Base には、独自の「温かさ」があります。<br>
+                ITで冷たく管理するのではなく、<br>
+                ママの温かい接客を支える「黒衣（くろご）」として。
+            </p>
+            <br><br>
+            <p style="font-size: 32px; font-weight: 700; color: var(--primary-gold); font-family: 'Zen Old Mincho', serif; text-shadow: 0 0 10px rgba(204, 164, 59, 0.3);">このシステムを、貴店のお客様のために役立てませんか？</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
