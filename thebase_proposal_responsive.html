@@ -6,7 +6,7 @@
     <title>Proposal for The Base: Digital Chee-Mama</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- フォント構成: 高級感のある明朝体とセリフ体 -->
+    <!-- フォント構成 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -51,14 +51,14 @@
 
         .slide {
             width: 100%;
-            height: 100vh;
-            min-height: 800px;
+            /* height: 100vh;  Fixed height removed to prevent overflow */
+            min-height: 100vh; /* Changed to min-height */
             position: relative;
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center;
-            padding: 4rem 6rem;
+            padding: 6rem 6rem; /* Padding increased slightly */
             page-break-after: always;
             border-bottom: 1px solid #222;
             overflow: hidden;
@@ -93,6 +93,10 @@
         #s7 .slide-bg { background-image: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2070&auto=format&fit=crop'); }
         #s8 .slide-bg { background-image: url('https://images.unsplash.com/photo-1535303311164-664fc9ec6532?q=80&w=2070&auto=format&fit=crop'); }
         #s9 .slide-bg { background-image: url('https://images.unsplash.com/photo-1569937756447-e25c0fb7598f?q=80&w=2070&auto=format&fit=crop'); }
+        /* Appendix Backgrounds */
+        #s10 .slide-bg { background-image: url('https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=2070&auto=format&fit=crop'); } /* Comparison */
+        #s11 .slide-bg { background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=2070&auto=format&fit=crop'); } /* Cost */
+        #s12 .slide-bg { background-image: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074&auto=format&fit=crop'); } /* FAQ */
 
         /* コンテンツラッパー */
         .content-wrapper {
@@ -322,21 +326,13 @@
             font-family: 'Zen Old Mincho', serif;
         }
 
-        /* Slide 4: Workflow Specifics */
-        .workflow-container {
+        /* Slide 4: Workflow Specifics - 3-Column Layout */
+        .workflow-inputs {
             display: grid;
-            grid-template-columns: 1fr 100px auto 100px 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             width: 100%;
-            align-items: center;
-            justify-items: center;
-        }
-        
-        .workflow-side { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 30px; 
-            width: 100%;
+            margin-bottom: 30px;
         }
         
         .action-card {
@@ -383,39 +379,36 @@
         }
         .sound-toggle:hover { background: rgba(204, 164, 59, 0.8); border-color: var(--primary-gold); }
 
-        /* Data Flow Animation */
-        .flow-connector {
+        /* Data Flow Animation - Vertical Flow */
+        .flow-container-vertical {
+            display: flex;
+            justify-content: center;
+            gap: 20%; /* Spacing for streams */
+            height: 60px;
             width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
+            margin-top: -20px; /* Overlap with cards slightly */
+            margin-bottom: 5px;
             position: relative;
-            overflow: hidden;
-            border-radius: 2px;
+            z-index: 0;
         }
         
-        .flow-stream {
-            position: absolute;
-            top: 0; left: 0;
-            width: 40%;
+        .flow-stream-vertical {
+            width: 4px;
             height: 100%;
-            background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+            background: linear-gradient(180deg, transparent, var(--primary-gold), transparent);
             filter: drop-shadow(0 0 5px var(--primary-gold));
-            animation: flowStream 1.5s infinite linear;
+            animation: flowStreamVertical 1.5s infinite linear;
+            opacity: 0.8;
         }
         
-        .flow-connector.reverse .flow-stream {
-            animation: flowStreamReverse 1.5s infinite linear;
-        }
-        
-        .flow-stream.delay-1 { animation-delay: 0.75s; width: 30%; opacity: 0.7; }
+        /* Staggered animations */
+        .flow-stream-vertical:nth-child(2) { animation-delay: 0.5s; }
+        .flow-stream-vertical:nth-child(3) { animation-delay: 1.0s; }
 
-        @keyframes flowStream {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(300%); }
-        }
-        @keyframes flowStreamReverse {
-            0% { transform: translateX(300%); }
-            100% { transform: translateX(-100%); }
+        @keyframes flowStreamVertical {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
         }
 
         .center-system {
@@ -424,10 +417,10 @@
             border-radius: 50%;
             width: 200px; height: 200px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            /* Pulse Animation */
             animation: systemPulse 3s infinite ease-in-out;
             position: relative;
             z-index: 10;
+            margin-top: -30px; /* Overlap flow */
         }
         
         @keyframes systemPulse {
@@ -437,16 +430,43 @@
         }
 
         /* Demo Slide Styles */
-        .demo-phone-img {
-            max-height: 600px;
-            width: auto;
-            max-width: 100%;
-            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.8));
-            transition: transform 0.3s;
+        .phone-mockup {
+            width: 320px;
+            height: 600px;
+            border: 8px solid #333;
+            border-radius: 40px;
+            background: #121212;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            margin: 0 auto;
         }
-        .demo-phone-img:hover {
-            transform: scale(1.02);
+        .chat-header {
+            background: rgba(30,30,30,0.95);
+            padding: 40px 15px 15px;
+            border-bottom: 1px solid #333;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 10; relative;
         }
+        .chat-screen {
+            padding: 20px 15px;
+            display: flex; flex-direction: column; gap: 15px;
+            background: #1b1b1b;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .chat-row { display: flex; gap: 10px; align-items: flex-end; }
+        .chat-row.right { justify-content: flex-end; }
+        .chat-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #555; background: #333; display: flex; align-items: center; justify-content: center; color: var(--primary-gold); font-size: 18px; }
+        .chat-msg {
+            padding: 10px 14px; border-radius: 18px; font-size: 13px; line-height: 1.5; max-width: 80%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .chat-left { background: #333; color: #fff; border-top-left-radius: 4px; }
+        .chat-right { background: var(--line-green); color: #fff; border-top-right-radius: 4px; }
         
         .demo-check-item {
             margin-bottom: 30px;
@@ -468,6 +488,164 @@
             color: #ddd;
             font-size: 16px;
             padding-left: 32px;
+        }
+
+        /* Appendix: Comparison Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 30px;
+            font-family: 'Zen Old Mincho', serif;
+            min-width: 800px; /* Ensure table doesn't squish too much */
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #ddd;
+        }
+        .comparison-table th {
+            background: rgba(0,0,0,0.5);
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--secondary-gold);
+        }
+        .comparison-table th.highlight, .comparison-table td.highlight {
+            background: rgba(204, 164, 59, 0.15);
+            border-left: 2px solid var(--primary-gold);
+            border-right: 2px solid var(--primary-gold);
+            color: #fff;
+            font-weight: bold;
+        }
+        .comparison-table th.highlight {
+            border-top: 2px solid var(--primary-gold);
+            background: rgba(204, 164, 59, 0.3);
+            color: var(--primary-gold);
+            font-size: 18px;
+        }
+        .comparison-table tr:last-child td.highlight {
+            border-bottom: 2px solid var(--primary-gold);
+        }
+        .comp-icon { font-size: 24px; margin-bottom: 5px; display: block; }
+        .comp-good { color: var(--line-green); }
+        .comp-bad { color: #666; }
+        .comp-best { color: var(--primary-gold); text-shadow: 0 0 10px rgba(204,164,59,0.5); }
+
+        /* Appendix: Cost Graph */
+        .cost-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 60px;
+            height: 400px;
+            margin-top: 120px; /* Increased margin to prevent overlap */
+            padding-bottom: 40px;
+            border-bottom: 1px solid #444;
+            width: 100%;
+        }
+        .cost-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 180px;
+            position: relative;
+        }
+        .cost-bar {
+            width: 100%;
+            background: #333;
+            border-radius: 8px 8px 0 0;
+            transition: height 1s ease-out;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .cost-bar.human {
+            height: 350px;
+            background: linear-gradient(to top, #444, #666);
+        }
+        .cost-bar.ai {
+            height: 100px;
+            background: linear-gradient(to top, var(--primary-gold), var(--secondary-gold));
+            box-shadow: 0 0 30px rgba(204, 164, 59, 0.3);
+        }
+        .cost-value {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px; /* Increased bottom margin */
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .cost-label {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: #ddd;
+        }
+        .cost-sub {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .cost-diff {
+            position: absolute;
+            top: -60px; /* Move above the value */
+            left: 50%;
+            transform: translateX(-50%);
+            right: auto;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--line-green);
+            background: rgba(6, 199, 85, 0.1);
+            padding: 10px 20px;
+            border: 1px solid var(--line-green);
+            border-radius: 30px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* Appendix: FAQ Styles */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            text-align: left;
+        }
+        .faq-item {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--primary-gold);
+            padding: 25px;
+            border-radius: 4px;
+        }
+        .faq-question {
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .faq-question i {
+            margin-top: 4px;
+        }
+        .faq-answer {
+            font-size: 15px;
+            color: #ddd;
+            line-height: 1.8;
         }
 
         /* =========================================
@@ -493,7 +671,7 @@
             .project-label { font-size: 12px; padding: 8px 16px; }
 
             /* Grid Reset */
-            .grid-2, .grid-3 {
+            .grid-2, .grid-3, .faq-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
@@ -508,21 +686,17 @@
             }
 
             /* Slide 4: Workflow Reordering for Mobile */
-            .workflow-container {
+            .workflow-inputs {
                 grid-template-columns: 1fr;
                 gap: 15px;
-                /* Optional: Add vertical arrows via ::after on items if needed */
             }
-            
-            /* Order: Input(Text) -> Input(Voice) -> System */
-            .workflow-side:nth-child(1) { order: 1; } /* Text Input */
-            .workflow-side:nth-child(5) { order: 2; } /* Voice Input (was 5th in grid) */
-            .center-system { order: 3; margin: 20px 0; width: 150px; height: 150px; } /* System */
+            .flow-container-vertical {
+                display: none; /* Simplify animation on mobile or keep if vertical works */
+                /* For simplicity, we can hide the flow lines on mobile and just show stacked cards -> system */
+            }
+            .center-system { margin: 20px 0; width: 150px; height: 150px; }
             .center-system i { font-size: 40px; }
             .center-system div { font-size: 14px; }
-
-            /* Hide horizontal flow connectors on mobile */
-            .flow-connector { display: none; }
 
             /* Slide 5: Database Table Mobile Optimization */
             .db-terminal {
@@ -542,9 +716,39 @@
             }
 
             /* Slide 7: Demo Mobile */
-            .demo-phone-img {
-                max-height: 400px;
-                margin-top: 20px;
+            .phone-mockup {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            /* Appendix: Comparison Table Mobile */
+            .comparison-table {
+                font-size: 12px;
+                min-width: 600px; /* Ensure scroll on small screens */
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 10px 5px;
+            }
+            .comp-icon { font-size: 18px; }
+
+            /* Appendix: Cost Graph Mobile */
+            .cost-container {
+                gap: 20px;
+                height: auto;
+                min-height: 350px;
+            }
+            .cost-bar-group {
+                width: 45%;
+            }
+            .cost-value {
+                font-size: 20px;
+            }
+            .cost-diff {
+                /* Same logic as PC now, centered above */
+                top: -60px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 16px;
             }
             
             /* General Adjustments */
@@ -553,23 +757,6 @@
             }
         }
     </style>
-    <script>
-        // Sound toggle function
-        function toggleSound(btn) {
-            const video = btn.parentElement.querySelector('video');
-            const icon = btn.querySelector('i');
-            
-            if (video.muted) {
-                video.muted = false;
-                icon.classList.remove('fa-volume-xmark');
-                icon.classList.add('fa-volume-high');
-            } else {
-                video.muted = true;
-                icon.classList.remove('fa-volume-high');
-                icon.classList.add('fa-volume-xmark');
-            }
-        }
-    </script>
 </head>
 <body>
 
@@ -641,74 +828,64 @@
             </div>
         </div>
 
-        <!-- Slide 4: Workflow -->
+        <!-- Slide 4: Workflow (3-Input Layout) -->
         <div class="slide" id="s4">
             <div class="slide-bg"></div>
             <div class="slide-overlay"></div>
             <div class="content-wrapper">
                 <h2>利用イメージ・ワークフロー</h2>
-                <div class="workflow-container">
-                    <!-- Left: Text Input (Local Image) -->
-                    <div class="workflow-side">
-                        <div class="action-card">
-                            <!-- Local Image Source -->
-                            <img src="./text_input.jpg" class="action-img" alt="Woman Texting">
-                            <div class="action-icon"><i class="fa-solid fa-keyboard"></i></div>
-                            <div class="action-overlay">
-                                <div class="action-title">テキスト入力</div>
-                                <div class="action-desc">
-                                    「この前のボトル何だっけ？」<br>
-                                    接客中のふとした疑問をLINEで送信。<br>
-                                    数秒でAIが回答します。
-                                </div>
-                            </div>
+                
+                <!-- Inputs Row -->
+                <div class="workflow-inputs">
+                    <!-- Text Input -->
+                    <div class="action-card">
+                        <img src="./text_input.jpg" class="action-img" alt="Woman Texting">
+                        <div class="action-icon"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="action-overlay">
+                            <div class="action-title">テキスト入力</div>
+                            <div class="action-desc">接客中のふとした疑問をLINEで送信。</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Voice Input -->
+                    <div class="action-card">
+                        <div class="sound-toggle" onclick="toggleSound(this)">
+                            <i class="fa-solid fa-volume-xmark"></i>
+                        </div>
+                        <video class="action-img" src="./movie.mp4" autoplay loop muted playsinline poster="./voice_poster.jpg">
+                            <img src="./voice_poster.jpg" class="action-img" alt="Woman Speaking Fallback">
+                        </video>
+                        <div class="action-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                        <div class="action-overlay">
+                            <div class="action-title">音声入力</div>
+                            <div class="action-desc">帰りのタクシーで喋るだけ。</div>
                         </div>
                     </div>
 
-                    <!-- Flow Connector (Left -> Center) -->
-                    <div class="flow-connector">
-                        <div class="flow-stream"></div>
-                        <div class="flow-stream delay-1"></div>
-                    </div>
-
-                    <!-- Center: System -->
-                    <div class="center-system">
-                        <i class="fa-solid fa-microchip" style="font-size: 50px; color: var(--primary-gold); margin-bottom: 10px;"></i>
-                        <div style="font-family:'Cinzel'; color:#fff; font-weight:bold; font-size:18px; text-align:center;">DIGITAL<br>CHEE-MAMA</div>
-                    </div>
-
-                    <!-- Flow Connector (Right -> Center) -->
-                    <div class="flow-connector reverse">
-                        <div class="flow-stream"></div>
-                        <div class="flow-stream delay-1"></div>
-                    </div>
-
-                    <!-- Right: Voice Input (Local Video with Sound Button) -->
-                    <div class="workflow-side">
-                        <div class="action-card">
-                            <!-- Sound Toggle Button -->
-                            <div class="sound-toggle" onclick="toggleSound(this)">
-                                <i class="fa-solid fa-volume-xmark"></i>
-                            </div>
-                            
-                            <!-- Video Implementation (Local File) -->
-                            <video class="action-img" src="./movie.mp4" autoplay loop muted playsinline poster="./voice_poster.jpg">
-                                <img src="./voice_poster.jpg" class="action-img" alt="Woman Speaking Fallback">
-                            </video>
-                            
-                            <div class="action-icon"><i class="fa-solid fa-microphone-lines"></i></div>
-                            <!-- Right aligned overlay text -->
-                            <div class="action-overlay" style="text-align: right;">
-                                <div class="action-title">音声レポート</div>
-                                <div class="action-desc">
-                                    「田中さん、マッカラン入れたよ」<br>
-                                    閉店後のタクシーや更衣室で。<br>
-                                    喋るだけで顧客台帳が更新されます。
-                                </div>
-                            </div>
+                    <!-- PC Input (NEW) -->
+                    <div class="action-card">
+                        <img src="./pc_input.jpg" class="action-img" alt="PC Input" onerror="this.onerror=null; this.src='https://placehold.co/600x400/222/CCA43B?text=PC+Input';">
+                        <div class="action-icon"><i class="fa-solid fa-desktop"></i></div>
+                        <div class="action-overlay">
+                            <div class="action-title">PC入力</div>
+                            <div class="action-desc">開店前の準備中に一括登録。</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Vertical Flow Animation -->
+                <div class="flow-container-vertical">
+                    <div class="flow-stream-vertical"></div>
+                    <div class="flow-stream-vertical"></div>
+                    <div class="flow-stream-vertical"></div>
+                </div>
+
+                <!-- Center: System -->
+                <div class="center-system">
+                    <i class="fa-solid fa-microchip" style="font-size: 50px; color: var(--primary-gold); margin-bottom: 10px;"></i>
+                    <div style="font-family:'Cinzel'; color:#fff; font-weight:bold; font-size:18px; text-align:center;">DIGITAL<br>CHEE-MAMA</div>
+                </div>
+
             </div>
         </div>
 
@@ -796,7 +973,7 @@
             </div>
         </div>
 
-        <!-- NEW Slide 6: AI Guardian (Option) -->
+        <!-- Slide 6: AI Guardian (Option) - Updated Text -->
         <div class="slide" id="s6">
             <div class="slide-bg"></div>
             <div class="slide-overlay"></div>
@@ -805,8 +982,7 @@
                 <h2>AI GUARDIAN</h2>
                 <p style="margin-bottom: 50px;">
                     単なる記録係ではありません。<br>
-                    AIが報告内容の「緊急度」と「重要度」を理解し、最適な人物へ瞬時に通知を振り分けます。<br>
-                    店舗を守り、好機を逃さない「攻めと守りの司令塔」として機能します。
+                    AIが報告内容の<strong style="color:var(--primary-gold); font-size:1.2em;">「危険度（トラブル予兆）」</strong>と<br><strong style="color:var(--primary-gold); font-size:1.2em;">「重要情報（VIP来店）」</strong>を理解し、<br>最適な人物へ瞬時に通知を振り分けます。
                 </p>
                 
                 <div class="grid-3">
@@ -867,7 +1043,7 @@
             </div>
         </div>
 
-        <!-- Slide 8: Demo Intro (Shifted) -->
+        <!-- Slide 8: Demo Intro (Shifted & Restored to CSS Mockup) -->
         <div class="slide" id="s8">
             <div class="slide-bg"></div>
             <div class="slide-overlay"></div>
@@ -903,8 +1079,46 @@
                     </div>
                     
                     <div style="display: flex; justify-content: center;">
-                        <!-- Real Phone Image (User Provided) -->
-                        <img src="./real_phone.png" class="demo-phone-img" alt="Demo Smartphone" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:300px;height:500px;border:2px dashed #666;display:flex;align-items:center;justify-content:center;color:#888;\'>real_phone.png not found</div>';">
+                        <!-- Rebuilt CSS Smartphone Mockup -->
+                        <div class="phone-mockup">
+                            <div class="chat-header">
+                                <div class="chat-avatar" style="border:1px solid #555;"><i class="fa-solid fa-robot"></i></div>
+                                <div style="font-weight:bold;">Digital Chee-Mama</div>
+                            </div>
+                            <div class="chat-screen">
+                                <div style="text-align: center; font-size: 10px; color: #777;">今日 23:45</div>
+                                
+                                <!-- Scenario 1: Voice Registration -->
+                                <div class="chat-row right">
+                                    <div class="chat-msg chat-right">
+                                        <i class="fa-solid fa-microphone-lines" style="margin-right:5px;"></i> (音声)<br>
+                                        「田中さん、マッカラン入れたよ」
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-row">
+                                    <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="chat-msg chat-left">
+                                        了解！田中健一さん(〇〇不動産)のマッカラン12年、登録しました🍾
+                                    </div>
+                                </div>
+
+                                <!-- Scenario 2: Inquiry -->
+                                <div class="chat-row right">
+                                    <div class="chat-msg chat-right">田中さん</div>
+                                </div>
+
+                                <div class="chat-row">
+                                    <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="chat-msg chat-left">
+                                        【田中 健一 様】<br>
+                                        🍾ボトル: Macallan 12Y (残40%)<br>
+                                        🎤十八番: TSUNAMI<br>
+                                        ⚠️備考: 接待時は個室希望
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -928,7 +1142,166 @@
             </div>
         </div>
 
-    </div>
+        <!-- Slide 10: APPENDIX - Comparison (Updated) -->
+        <div class="slide" id="s10">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="project-label">APPENDIX</div>
+                <h2>COMPETITIVE COMPARISON</h2>
+                <p style="margin-bottom: 20px;">
+                    POSレジや一般的な顧客管理アプリと比較して、<br>
+                    「入力の容易さ」と「接客への貢献度」が圧倒的に異なります。
+                </p>
+                
+                <div class="table-responsive">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>機能 / 特徴</th>
+                                <th>POSレジ<br><span style="font-size:12px; font-weight:normal;">(スマレジ等)</span></th>
+                                <th>管理アプリ<br><span style="font-size:12px; font-weight:normal;">(NightWorks等)</span></th>
+                                <th>紙・Excel<br><span style="font-size:12px; font-weight:normal;">(アナログ管理)</span></th>
+                                <th class="highlight">デジタル・チーママ<br><span style="font-size:12px; font-weight:normal;">(The Base 専用)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>主な目的</td>
+                                <td>会計・売上管理</td>
+                                <td>顧客データ保存</td>
+                                <td>記録・日報</td>
+                                <td class="highlight">接客支援・記憶の拡張</td>
+                            </tr>
+                            <tr>
+                                <td>入力の手間</td>
+                                <td><i class="fa-solid fa-xmark comp-icon comp-bad"></i><br>専用端末で操作</td>
+                                <td><i class="fa-solid fa-triangle-exclamation comp-icon comp-bad"></i><br>アプリ起動・タップ</td>
+                                <td><i class="fa-solid fa-xmark comp-icon comp-bad"></i><br>手書き・PC入力</td>
+                                <td class="highlight"><i class="fa-solid fa-check comp-icon comp-best"></i><br>スマホ(音声/文字)・PC</td>
+                            </tr>
+                            <tr>
+                                <td>速報・通知</td>
+                                <td>なし</td>
+                                <td>一部あり</td>
+                                <td>なし</td>
+                                <td class="highlight"><i class="fa-solid fa-check comp-icon comp-best"></i><br>危険・VIP・高額を即時通知</td>
+                            </tr>
+                            <tr>
+                                <td>現場定着率</td>
+                                <td>会計時のみ</td>
+                                <td>入力忘れ多発</td>
+                                <td>形骸化しやすい</td>
+                                <td class="highlight"><i class="fa-solid fa-check comp-icon comp-best"></i><br>「ついで」に終わる</td>
+                            </tr>
+                            <tr>
+                                <td>カスタマイズ</td>
+                                <td>不可</td>
+                                <td>限定的</td>
+                                <td>自由</td>
+                                <td class="highlight"><i class="fa-solid fa-check comp-icon comp-best"></i><br>自由（要相談）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
+        <!-- Slide 11: APPENDIX - Cost Performance (Updated) -->
+        <div class="slide" id="s11">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="project-label">APPENDIX</div>
+                <h2>COST PERFORMANCE</h2>
+                <p style="margin-bottom: 20px;">
+                    優秀なスタッフ1名分の能力を、1/3以下のコストで提供します。<br>
+                    採用リスクも、教育コストも、退職リスクもゼロです。
+                </p>
+                
+                <div class="cost-container">
+                    <div class="cost-bar-group">
+                        <div class="cost-value">¥350,000~</div>
+                        <div class="cost-bar human"></div>
+                        <div class="cost-label">人間を採用<br><span class="cost-sub">(チーママ/黒服)</span></div>
+                    </div>
+                    <div class="cost-bar-group">
+                        <div class="cost-diff">1/3 以下</div>
+                        <div class="cost-value" style="color:var(--primary-gold);">¥100,000</div>
+                        <div class="cost-bar ai"></div>
+                        <div class="cost-label" style="color:var(--primary-gold);">本システム<br><span class="cost-sub">(保守・AI費用込)</span></div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.1); padding: 20px 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                    <ul style="list-style: none; text-align: left; padding: 0;">
+                        <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color:var(--primary-gold); margin-right: 10px;"></i> <strong>24時間365日稼働：</strong> 休みなく、絶対に忘れません。</li>
+                        <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color:var(--primary-gold); margin-right: 10px;"></i> <strong>機会損失の防止：</strong> 月にボトル1本の期限切れを防ぐだけで元が取れます。</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--primary-gold); margin-right: 10px;"></i> <strong>安心の保守体制：</strong> サーバー監視・データ二重バックアップ完備。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: APPENDIX - FAQ (Updated) -->
+        <div class="slide" id="s12">
+            <div class="slide-bg"></div>
+            <div class="slide-overlay"></div>
+            <div class="content-wrapper">
+                <div class="project-label">APPENDIX</div>
+                <h2>FAQ</h2>
+                
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question"><i class="fa-solid fa-coins"></i> 導入・ランニング費用は？</div>
+                        <div class="faq-answer">
+                            月額10万円（税別）でご提供します。<br>
+                            通常のアプリ開発（数百万円）に比べ初期投資を抑えられ、スタッフ1名の1/3以下のコストで24時間稼働します。
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><i class="fa-solid fa-user-lock"></i> セキュリティは大丈夫？</div>
+                        <div class="faq-answer">
+                            Googleの堅牢なクラウド上でデータを管理します。<br>
+                            事前に登録されたスタッフ（ホワイトリスト）しかシステムを利用できないよう制限をかけるため、情報漏洩リスクを最小限に抑えられます。
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><i class="fa-solid fa-thumbs-up"></i> 入力は本当に簡単？</div>
+                        <div class="faq-answer">
+                            はい、LINEで「話しかけるだけ」です。<br>
+                            帰りのタクシーで音声入力したり、開店前にPCでまとめて登録したりと、状況に合わせて最適な方法を選べます。
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><i class="fa-solid fa-rocket"></i> すぐに始められる？</div>
+                        <div class="faq-answer">
+                            ヒアリング完了後、最短1週間で稼働可能です。<br>
+                            既存の顧客データ（Excelや紙台帳）の移行作業も、オプションにて代行いたします。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- Script moved to end of body -->
+    <script>
+        function toggleSound(btn) {
+            const video = btn.parentElement.querySelector('video');
+            const icon = btn.querySelector('i');
+            
+            if (video.muted) {
+                video.muted = false;
+                icon.classList.remove('fa-volume-xmark');
+                icon.classList.add('fa-volume-high');
+            } else {
+                video.muted = true;
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-xmark');
+            }
+        }
+    </script>
 </body>
 </html>
