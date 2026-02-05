@@ -73,9 +73,6 @@
     .typing-cursor::after { content: '|'; animation: blink 1s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   </style>
-  
-  <!-- 【重要】設定ファイルの読み込み（エラーハンドリング付き） -->
-  <script src="env.js" onerror="console.error('【重要】env.js の読み込みに失敗しました。ファイルが存在するか確認してください。'); alert('【設定エラー】設定ファイル(env.js)が見つかりません。');"></script>
 </head>
 <body class="bg-gray-50 text-slate-800 leading-relaxed overflow-x-hidden selection:bg-accent-400 selection:text-black">
 
@@ -328,6 +325,24 @@
         </div>
 
         <div class="glass-panel-dark p-6 md:p-10 rounded-2xl shadow-2xl fade-up">
+          
+          <!-- 【修正】APIキー入力フィールドの追加 -->
+          <div class="mb-6 bg-gray-900/50 p-4 rounded-lg border border-red-500/30">
+            <label for="api-key-input" class="block text-[10px] font-bold text-red-400 mb-2 tracking-wider uppercase flex items-center gap-2">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Gemini API Key (Required for Demo)
+            </label>
+            <div class="flex gap-2">
+              <input type="password" id="api-key-input" class="flex-1 px-4 py-2 bg-gray-950 border border-gray-700 rounded text-xs text-white placeholder-gray-700 focus:border-red-400 focus:outline-none transition-colors" placeholder="AIzaSy... (ここにAPIキーを入力してください)">
+              <button id="save-key-btn" class="px-4 py-2 bg-gray-800 text-xs font-bold text-gray-300 rounded hover:bg-gray-700 transition-colors whitespace-nowrap">
+                保存する
+              </button>
+            </div>
+            <p class="mt-2 text-[10px] text-gray-500">
+              ※セキュリティのため、APIキーはサーバーに送信されず、あなたのブラウザ内（Local Storage）にのみ保存されます。
+            </p>
+          </div>
+
           <div class="mb-6">
             <label for="user-problem" class="block text-xs font-bold text-gray-400 mb-3 tracking-wider">CURRENT ISSUE / 課題</label>
             <textarea id="user-problem" rows="3" class="w-full px-5 py-4 bg-gray-950/50 border border-gray-700 rounded-xl focus:ring-1 focus:ring-accent-500 focus:border-accent-500 outline-none transition-all resize-none text-sm md:text-base text-gray-200 placeholder-gray-600" placeholder="例：日報の集計が面倒、社内規定を探すのに時間がかかる..."></textarea>
@@ -439,26 +454,36 @@
   </footer>
 
   <script>
-    // --- Gemini API Logic ---
+    // --- Gemini API Logic (Secure Version: User Inputs Key) ---
     const solveBtn = document.getElementById('solve-btn');
     const problemInput = document.getElementById('user-problem');
     const responseContainer = document.getElementById('ai-response-container');
     const responseText = document.getElementById('ai-response-text');
     const loading = document.getElementById('ai-loading');
+    
+    // API Key Input Elements
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveKeyBtn = document.getElementById('save-key-btn');
 
-    // API Key Handling with Error Detection
-    let apiKey = "";
-
-    // CONFIG変数が読み込まれているかチェック
-    if (typeof window.CONFIG === 'undefined') {
-      console.error("【エラー】env.js が読み込まれていません。または CONFIG が定義されていません。");
-    } else if (!window.CONFIG.GEMINI_API_KEY) {
-      console.error("【エラー】env.js 内で GEMINI_API_KEY が設定されていません。");
-    } else {
-      apiKey = window.CONFIG.GEMINI_API_KEY;
+    // Load saved key if available
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) {
+      apiKeyInput.value = savedKey;
     }
 
-    async function callGemini(prompt, retries = 5, delay = 1000) {
+    // Save key functionality
+    saveKeyBtn.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      if (key) {
+        localStorage.setItem('gemini_api_key', key);
+        alert('APIキーをブラウザに保存しました。\n（この端末でのみ有効です）');
+      } else {
+        localStorage.removeItem('gemini_api_key');
+        alert('APIキーを削除しました。');
+      }
+    });
+
+    async function callGemini(prompt, apiKey, retries = 5, delay = 1000) {
       const systemPrompt = `
       あなたは「前島企画」のAI経営参謀です。
       「NTT品質の技術を、個人の機動力で」をモットーとしています。
@@ -494,26 +519,27 @@
       } catch (error) {
         if (retries > 0) {
           await new Promise(res => setTimeout(res, delay));
-          return callGemini(prompt, retries - 1, delay * 2);
+          return callGemini(prompt, apiKey, retries - 1, delay * 2);
         }
         throw error;
       }
     }
 
     solveBtn.addEventListener('click', async () => {
-      // API Key Check at Click Event
-      if (typeof window.CONFIG === 'undefined') {
-        alert("【設定エラー】\n'env.js' ファイルが正しく読み込まれていません。\nindex.htmlと同じ場所にenv.jsがあるか、ファイル名が正しいか確認してください。");
-        return;
-      }
+      // Get Key from Input
+      const apiKey = apiKeyInput.value.trim();
       
       if (!apiKey) {
-        alert("【設定エラー】\nAPIキーが設定されていません。\n'env.js' ファイルを開き、GEMINI_API_KEYに正しいキーを入力してください。");
+        alert("【設定エラー】\nAPIキーが入力されていません。\nデモを行うには、Gemini APIキーを入力してください。");
+        apiKeyInput.focus();
         return;
       }
 
       const problem = problemInput.value.trim();
-      if (!problem) return;
+      if (!problem) {
+        alert("課題を入力してください。");
+        return;
+      }
 
       solveBtn.disabled = true;
       solveBtn.classList.add('opacity-50');
@@ -522,11 +548,12 @@
       responseText.innerText = "";
 
       try {
-        const answer = await callGemini(problem);
-        // Typing animation simulation
+        const answer = await callGemini(problem, apiKey);
+        
         loading.classList.add('hidden');
         responseContainer.classList.remove('hidden');
         
+        // Typing animation
         let i = 0;
         const speed = 20;
         responseText.classList.add('typing-cursor');
@@ -545,7 +572,7 @@
       } catch (error) {
         loading.classList.add('hidden');
         responseContainer.classList.remove('hidden');
-        responseText.innerText = "申し訳ありません。現在AI参謀が会議中（接続エラー）です。恐れ入りますが、時間をおいてお試しいただくか、直接メールにてご相談ください。";
+        responseText.innerText = "エラーが発生しました。APIキーが正しいか確認してください。（通信エラー）";
       } finally {
         solveBtn.disabled = false;
         solveBtn.classList.remove('opacity-50');
