@@ -74,8 +74,8 @@
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   </style>
   
-  <!-- 【重要】設定ファイルの読み込み -->
-  <script src="env.js"></script>
+  <!-- 【重要】設定ファイルの読み込み（エラーハンドリング付き） -->
+  <script src="env.js" onerror="console.error('【重要】env.js の読み込みに失敗しました。ファイルが存在するか確認してください。'); alert('【設定エラー】設定ファイル(env.js)が見つかりません。');"></script>
 </head>
 <body class="bg-gray-50 text-slate-800 leading-relaxed overflow-x-hidden selection:bg-accent-400 selection:text-black">
 
@@ -446,10 +446,16 @@
     const responseText = document.getElementById('ai-response-text');
     const loading = document.getElementById('ai-loading');
 
-    // API Key Handling
+    // API Key Handling with Error Detection
     let apiKey = "";
-    if (typeof CONFIG !== 'undefined' && CONFIG.GEMINI_API_KEY) {
-      apiKey = CONFIG.GEMINI_API_KEY;
+
+    // CONFIG変数が読み込まれているかチェック
+    if (typeof window.CONFIG === 'undefined') {
+      console.error("【エラー】env.js が読み込まれていません。または CONFIG が定義されていません。");
+    } else if (!window.CONFIG.GEMINI_API_KEY) {
+      console.error("【エラー】env.js 内で GEMINI_API_KEY が設定されていません。");
+    } else {
+      apiKey = window.CONFIG.GEMINI_API_KEY;
     }
 
     async function callGemini(prompt, retries = 5, delay = 1000) {
@@ -464,7 +470,7 @@
       【提案に盛り込む要素】
       1. 現状の課題分析（共感）
       2. NTT品質の設計思想（堅牢性、セキュリティ、拡張性）
-      3. 具体的な技術構成（LINE WORKS, Google Drive, Kintone, Gemini 2.0/2.5 Pro, GAS, Zapier等）
+      3. 具体的な技術構成（LINE, Google Drive, Gemini 2.0/2.5 Pro, GAS, Zapier, ChatGPT, NotebookLM等）
       4. 期待できる定量的なメリット（月20時間削減、など）
       
       【出力トーン】
@@ -495,9 +501,14 @@
     }
 
     solveBtn.addEventListener('click', async () => {
-      // API Key Check
+      // API Key Check at Click Event
+      if (typeof window.CONFIG === 'undefined') {
+        alert("【設定エラー】\n'env.js' ファイルが正しく読み込まれていません。\nindex.htmlと同じ場所にenv.jsがあるか、ファイル名が正しいか確認してください。");
+        return;
+      }
+      
       if (!apiKey) {
-        alert("【設定エラー】\nAPIキーが設定されていません。\n'env.js' ファイルを作成し、APIキーを記述してください。");
+        alert("【設定エラー】\nAPIキーが設定されていません。\n'env.js' ファイルを開き、GEMINI_API_KEYに正しいキーを入力してください。");
         return;
       }
 
